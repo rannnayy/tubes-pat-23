@@ -1,0 +1,22 @@
+{
+  "name": "payment-processing-app",
+  "version": "1.0.0",
+  "description": "An application for processing invoices",
+  "main": "app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "William",
+  "dependencies": {
+    "amqp": "^0.2.7",
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.17.2",
+    "mysql2": "^3.6.3",
+    "nodemon": "^3.0.1",
+    "sequelize": "^6.34.0",
+    "sqlite3": "^5.0.2",
+    "uuid": "^8.3.2"
+  }
+}
