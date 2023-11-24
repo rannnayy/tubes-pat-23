@@ -52,6 +52,7 @@ CREATE TABLE bookings (
   user_id       UUID            NOT NULL REFERENCES users(id),
   event_id      UUID            NOT NULL,
   chair_id      UUID            NOT NULL,
+  pdf_url       TEXT,
   status        booking_status  NOT NULL DEFAULT 'processing',
   created_at    TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMP       DEFAULT CURRENT_TIMESTAMP     

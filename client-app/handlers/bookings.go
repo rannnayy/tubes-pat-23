@@ -80,12 +80,8 @@ func GetAllBooking(c *fiber.Ctx) error {
 	})
 }
 
-// {status: ""}
+// {status: "", pdf_url: ""}
 func UpdateBookingStatus(c *fiber.Ctx) error {
-	if err := types.Enforce(c); err != nil {
-		return err
-	}
-	
 	param := new(database.UpdateBookingStatusParams)
 
 	if err := param.ID.UnmarshalJSON([]byte(c.Params("id"))); err != nil {

@@ -59,7 +59,7 @@ func main() {
 	bookings := api.Group("/bookings")
 	bookings.Post("/", handlers.CreateBooking)           // {event_id: "", chair_id: ""}
 	bookings.Get("/", handlers.GetAllBooking)            //
-	bookings.Patch("/:id", handlers.UpdateBookingStatus) // {status: ""}
+	bookings.Patch("/:id", handlers.UpdateBookingStatus) // {status: "", pdf_url: ""}
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")

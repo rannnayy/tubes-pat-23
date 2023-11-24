@@ -20,7 +20,8 @@ RETURNING *;
 
 -- name: UpdateBookingStatus :exec
 UPDATE bookings
-  set status = $2
+  set status = $2,
+  pdf_url = $3
 WHERE id = $1;
 
 -- name: DeleteBooking :exec

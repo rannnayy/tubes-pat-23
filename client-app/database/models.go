@@ -59,6 +59,7 @@ type Booking struct {
 	UserID    pgtype.UUID      `db:"user_id" json:"user_id" validate:"required,numeric,min=1"`
 	EventID   pgtype.UUID      `db:"event_id" json:"event_id" validate:"required,uuid4"`
 	ChairID   pgtype.UUID      `db:"chair_id" json:"chair_id" validate:"required,uuid4"`
+	PdfUrl    pgtype.Text      `db:"pdf_url" json:"pdf_url"`
 	Status    BookingStatus    `db:"status" json:"status" validate:"required,bookingstatus_custom_validation"`
 	CreatedAt pgtype.Timestamp `db:"created_at" json:"created_at"`
 	UpdatedAt pgtype.Timestamp `db:"updated_at" json:"updated_at"`

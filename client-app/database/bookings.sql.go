@@ -17,7 +17,7 @@ INSERT INTO bookings (
 ) VALUES (
   $1, $2, $3
 )
-RETURNING id, user_id, event_id, chair_id, status, created_at, updated_at
+RETURNING id, user_id, event_id, chair_id, pdf_url, status, created_at, updated_at
 `
 
 type CreateBookingParams struct {
@@ -34,6 +34,7 @@ func (q *Queries) CreateBooking(ctx context.Context, arg CreateBookingParams) (B
 		&i.UserID,
 		&i.EventID,
 		&i.ChairID,
+		&i.PdfUrl,
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -52,7 +53,7 @@ func (q *Queries) DeleteBooking(ctx context.Context, id pgtype.UUID) error {
 }
 
 const getAllBookingByUser = `-- name: GetAllBookingByUser :many
-SELECT id, user_id, event_id, chair_id, status, created_at, updated_at FROM bookings
+SELECT id, user_id, event_id, chair_id, pdf_url, status, created_at, updated_at FROM bookings
 WHERE user_id = $1
 `
 
@@ -70,6 +71,7 @@ func (q *Queries) GetAllBookingByUser(ctx context.Context, userID pgtype.UUID) (
 			&i.UserID,
 			&i.EventID,
 			&i.ChairID,
+			&i.PdfUrl,
 			&i.Status,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -85,7 +87,7 @@ func (q *Queries) GetAllBookingByUser(ctx context.Context, userID pgtype.UUID) (
 }
 
 const getBookingById = `-- name: GetBookingById :one
-SELECT id, user_id, event_id, chair_id, status, created_at, updated_at FROM bookings
+SELECT id, user_id, event_id, chair_id, pdf_url, status, created_at, updated_at FROM bookings
 WHERE id = $1 LIMIT 1
 `
 
@@ -97,6 +99,7 @@ func (q *Queries) GetBookingById(ctx context.Context, id pgtype.UUID) (Booking, 
 		&i.UserID,
 		&i.EventID,
 		&i.ChairID,
+		&i.PdfUrl,
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -105,7 +108,7 @@ func (q *Queries) GetBookingById(ctx context.Context, id pgtype.UUID) (Booking, 
 }
 
 const getBookingByUser = `-- name: GetBookingByUser :one
-SELECT id, user_id, event_id, chair_id, status, created_at, updated_at FROM bookings
+SELECT id, user_id, event_id, chair_id, pdf_url, status, created_at, updated_at FROM bookings
 WHERE user_id = $1 LIMIT 1
 `
 
@@ -117,6 +120,7 @@ func (q *Queries) GetBookingByUser(ctx context.Context, userID pgtype.UUID) (Boo
 		&i.UserID,
 		&i.EventID,
 		&i.ChairID,
+		&i.PdfUrl,
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -126,16 +130,18 @@ func (q *Queries) GetBookingByUser(ctx context.Context, userID pgtype.UUID) (Boo
 
 const updateBookingStatus = `-- name: UpdateBookingStatus :exec
 UPDATE bookings
-  set status = $2
+  set status = $2,
+  pdf_url = $3
 WHERE id = $1
 `
 
 type UpdateBookingStatusParams struct {
 	ID     pgtype.UUID   `db:"id" json:"id"`
 	Status BookingStatus `db:"status" json:"status" validate:"required,bookingstatus_custom_validation"`
+	PdfUrl pgtype.Text   `db:"pdf_url" json:"pdf_url"`
 }
 
 func (q *Queries) UpdateBookingStatus(ctx context.Context, arg UpdateBookingStatusParams) error {
-	_, err := q.db.Exec(ctx, updateBookingStatus, arg.ID, arg.Status)
+	_, err := q.db.Exec(ctx, updateBookingStatus, arg.ID, arg.Status, arg.PdfUrl)
 	return err
 }
