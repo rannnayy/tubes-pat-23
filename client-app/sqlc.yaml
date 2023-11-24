@@ -1,0 +1,26 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "database/query"
+    schema: "database/schema"
+    database:
+      uri: postgresql://postgres:postgres@localhost:5432/clientapp
+    gen:
+      go:
+        out: database
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+        emit_db_tags: true
+        overrides:
+          - column: users.username
+            go_struct_tag: validate:"required,max=32"
+          - column: users.password
+            go_struct_tag: validate:"required,alphanum"
+          - column: bookings.user_id
+            go_struct_tag: validate:"required,numeric,min=1"
+          - column: bookings.event_id
+            go_struct_tag: validate:"required,uuid4"
+          - column: bookings.chair_id
+            go_struct_tag: validate:"required,uuid4"
+          - column: bookings.status
+            go_struct_tag: validate:"required,bookingstatus_custom_validation"
