@@ -15,6 +15,9 @@ app.use(bodyParser.json());
 const TICKET_WEBHOOK_URL = process.env.TICKET_WEBHOOK_URL || 'http://localhost:4000/webhook';
 const CALLBACK_WEBHOOK_URL = process.env.CALLBACK_WEBHOOK_URL || 'http://localhost:5000/webhook';
 
+rabbitMQ.setConsumer(queueName, processQueueMessage);
+rabbitMQ.createChannel();
+
 app.post('/invoice', async (req, res) => {
     try {
         const { amount, customer_name } = req.body;
@@ -38,34 +41,21 @@ app.post('/invoice', async (req, res) => {
 
 
 app.get('/webhook', async (req, res) => {
-    const { invoiceId } = req.query;
-    const dataToEnqueue = { invoiceId, timestamp: new Date() }; // Add any necessary data
-
-    const rabbitMQChannel = await rabbitMQ.getChannel();
-    await rabbitMQChannel.assertQueue(queueName, { durable: true });
-    rabbitMQChannel.sendToQueue(queueName, Buffer.from(JSON.stringify(dataToEnqueue)));
-
-    console.log(`Webhook request received for invoice ID: ${invoiceId}, data enqueued for processing`);
-    res.status(200).send('Webhook request received');
-});
-
-(async () => {
     try {
+        const { invoiceId } = req.query;
+        const dataToEnqueue = { invoiceId, timestamp: new Date() };
+
         const rabbitMQChannel = await rabbitMQ.getChannel();
-        await rabbitMQChannel.assertQueue(queueName, { durable: true });
+        await rabbitMQChannel.assertQueue(queueName, { durable: true, persistent: true });
+        rabbitMQChannel.sendToQueue(queueName, Buffer.from(JSON.stringify(dataToEnqueue)), { persistent: true });
 
-        rabbitMQChannel.consume(queueName, (msg) => {
-            processQueueMessage(msg);
-            rabbitMQChannel.ack(msg);
-        });
-
-        console.log('Queue listener is set up and running.');
+        console.log(`Webhook request received for invoice ID: ${invoiceId}, data enqueued for processing`);
+        res.status(200).send('Webhook request received');
     } catch (err) {
-        console.error('Error setting up the queue listener:', err);
-
+        console.log(err);
+        res.status(500).send('Internal Server Error');
     }
-})();
-
+});
 
 
 app.listen(PORT, () => {

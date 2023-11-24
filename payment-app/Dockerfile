@@ -8,9 +8,8 @@ COPY package*.json ./
 
 RUN npm install
 
-
-COPY . .
-
+COPY src/ ./src/
+copy .env ./
 EXPOSE 5000
 
 CMD [ "npm", "start" ]
