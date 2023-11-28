@@ -26,7 +26,7 @@ services:
       DB_DBNAME: clientapp
       DB_PORT: 5432
       DATABASE_URL: postgresql://postgres:postgres@postgres/clientapp
-      TICKET_APP: http://localhost:3001
+      TICKET_APP: http://ticketapp:6000
       WAIT_HOSTS: postgres:5432
     # restart: always
 volumes:
