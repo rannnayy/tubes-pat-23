@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 
 var Stomp = require('stomp-client');
 var destination = '/queue/bookings';
-var StompClient = new Stomp('mq', 8161, 'admin', 'admin');
+var StompClient = new Stomp('mq', 61613, 'admin', 'admin');
 
 const qr = require('qrcode');
 const fs = require('fs');
@@ -40,35 +40,62 @@ const app = express();
 app.use(bodyParser.json());
 const port = 6000;
 
-var payment_endpoint = 'http://localhost:5000';
+var payment_endpoint = 'http://payment:5000';
+var client_endpoint = 'http://clientapp:3000';
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello, World!');
 });
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running at http://ticketapp:${port}`);
+    let response = fetch(payment_endpoint+'/invoice', {
+        method: 'POST',
+        body: JSON.stringify({
+            amount: 100,
+            bookingId: "HMXJFKDL"
+        }),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        }
+    })
+    console.log(response);
 });
 
 const prisma = new PrismaClient();
 
-app.get('/webhook', function(req: any, res: any) {
+app.get('/webhook', async function(req: any, res: any) {
     console.log(req.body);
 
+    StompClient.connect(function () {
+        console.log("Sending to ActiveMQ");
+        StompClient.publish(destination, res.booking_id);
+        StompClient.disconnect();
+    })
+    
     console.log("HMMMMMMMMMMMMMMMMMMMMMMMMM");
     console.log(res);
-    const dataReceived : any = res.json();
+    const dataReceived : string = res;
     console.log("SINIIIIIIIIIIIIIIIIIIIIIIIII")
     console.log(dataReceived);
     
-    const updatedBooking = prisma.bookings.update({
+    const updatedBooking = await prisma.bookings.update({
         where: { bookings_id: res.booking_id, },
         data: {
             payment_url: res.webhook_url.toString()
         },
     })
 
-    generateQR(res.booking_id.toString())
+    const seatID = await prisma.bookings.findFirstOrThrow({
+        where: { bookings_id: res.booking_id },
+        include: {
+            bookings_event: false,
+            bookings_seat: false
+        }
+    })
+    console.log(seatID);
+
+    await generateQR(res.booking_id.toString())
     .then(() => {
         res.status(200).json({
             'status': 'true',
@@ -84,11 +111,11 @@ app.get('/webhook', function(req: any, res: any) {
 
     console.log(url.pathToFileURL('./src/output/'+res.booking_id.toString()+'.pdf'));
 
-    let response = fetch(payment_endpoint+'/invoice', {
+    let response = await fetch(client_endpoint+'/api/bookings', {
         method: 'POST',
         body: JSON.stringify({
-            booking_id: 100,
-            webhook_url: url.pathToFileURL('./src/output/'+res.booking_id.toString()+'.pdf'),
+            status: true,
+            pdf_url: url.pathToFileURL('./src/output/'+res.booking_id.toString()+'.pdf'),
         }),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -107,6 +134,16 @@ app.get('/webhook', function(req: any, res: any) {
         
                 StompClient.disconnect();
             });
+            
+            // const seat = prisma.seat.update({
+            //     where: {
+            //         seat_id: seatID,
+            //     },
+            //     data: { 
+            //         seat_status: "BOOKED",
+            //     }
+            // })
+
         } else {
             console.log("Client is unable to receive webhook!");
         }
@@ -312,81 +349,48 @@ app.post("/api/booking", async (req: any, res: any) => {
                 console.log(payment_endpoint+'/invoice');
                 console.log({
                     amount: 100,
-                    customer_name: bookings_buyer,
+                    bookingId: booking_id
                 });
-                fetch(payment_endpoint+'/invoice', {
+
+                let response = await fetch(payment_endpoint+'/invoice', {
                     method: 'POST',
                     body: JSON.stringify({
                         amount: 100,
-                        customer_name: bookings_buyer,
+                        bookingId: booking_id
                     }),
                     headers: {
                         'Content-type': 'application/json; charset=UTF-8',
                     }
                 })
+                console.log(response);
 
-                StompClient.connect(function () {
-                    console.log("Sending to ActiveMQ");
-                    const bookingToQueue = {
-                        booking_id: booking_id,
-                        bookings_buyer: bookings_buyer,
-                        amount: 100
-                    };
-                    StompClient.publish(destination, JSON.stringify(bookingToQueue));
-                    StompClient.disconnect();
+                res.status(200).json({
+                    'status': 'ONGOING',
+                    'pdf_url': ''
                 })
+
             } else {
-                let error_message = "NoSeatAvailable";
-                generateQR(error_message)
-                .then(() => {
-                    console.log(error_message);
-                    res.status(500).json({
-                        'status': 'false',
-                        'pdf_url': ''
-                    })
+                let error_message = "SeatNotAvailable";
+                console.log(error_message)
+                res.status(500).json({
+                    'status': 'false',
+                    'pdf_url': 'SeatNotAvailable'
                 })
-                .catch((error) => {
-                    console.error('Error converting image to PDF:', error);
-                    res.status(500).json({
-                        'status': 'false',
-                        'pdf_url': ''
-                    })
-                });
             }
         } catch (error: any) {
             if (error.code === 'P2002') {
                 let error_message = "UniqueConstraintViolationEventFullyBookedOrSeatTaken";
-                generateQR(error_message)
-                .then(() => {
-                    console.log(error_message);
-                    res.status(500).json({
-                        'status': 'false',
-                        'pdf_url': ''
-                    })
+                console.log(error_message);
+                res.status(500).json({
+                    'status': 'false',
+                    'pdf_url': 'NotUnique'
                 })
-                .catch((error) => {
-                    console.error('Error converting image to PDF:', error);
-                    res.status(500).json({
-                        'status': 'false',
-                        'pdf_url': ''
-                    })
-                });
             } else {
                 let error_message = 'InternalServerError'
-                generateQR(error_message)
-                .then(() => {
-                    console.log(error_message);
-                    res.status(500).json({
-                        'status': 'false',
-                        'pdf_url': ''
-                    })
-                })
-                .catch((error) => {
-                    console.error('Error converting image to PDF:', error);
-                    res.status(500).json({
-                        'status': 'false',
-                        'pdf_url': ''
-                    })
+                console.log(error_message + ' : ' + error);
+                res.status(500).json({
+                    'status': 'false',
+                    'pdf_url': 'UnknownError'
                 });
             }
         }
