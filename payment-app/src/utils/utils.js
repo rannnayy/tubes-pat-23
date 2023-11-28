@@ -1,4 +1,4 @@
-const { Log } = require('./db'); // Adjust the path as needed
+const { Log } = require('../database/db'); // Adjust the path as needed
 
 const TICKET_WEBHOOK_URL = process.env.TICKET_WEBHOOK_URL || 'http://localhost:4000/webhook';
 

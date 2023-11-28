@@ -1,10 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-require('dotenv').config();
 const uuid = require('uuid');
-const rabbitMQ = require('./rabbitmq');
-const { processQueueMessage, simulatePayment } = require('./utils');
-const { Invoice, Log } = require('./db');
+const rabbitMQ = require('./mq/rabbitmq');
+const { processQueueMessage, simulatePayment } = require('./utils/utils');
+const { Invoice, Log } = require('./database/db');
+
 
 const app = express();
 const PORT = 5000;
@@ -47,8 +48,6 @@ app.get('/webhook', async (req, res) => {
         const rabbitMQChannel = await rabbitMQ.getChannel();
         await rabbitMQChannel.assertQueue(queueName, { durable: true, persistent: true });
         rabbitMQChannel.sendToQueue(queueName, Buffer.from(JSON.stringify(dataToEnqueue)), { persistent: true });
-
-
 
         console.log(`Webhook request received for invoice ID: ${invoiceId}, data enqueued for processing`);
         res.status(200).send('Webhook request received');

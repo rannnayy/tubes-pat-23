@@ -1,7 +1,10 @@
 const { Sequelize, DataTypes } = require('sequelize');
+console.log('DB_NAME:', process.env.DB_NAME);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
 
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
+    host: "payment-db",
     dialect: 'mysql',
 });
 
@@ -47,8 +50,7 @@ const Invoice = sequelize.define('Invoice', {
 (async () => {
     try {
         await sequelize.authenticate();
-        await sequelize.sync({ alter: true }); // Synchronize the database with the model
-        // update the databse with model
+        await sequelize.sync({ alter: true });
         console.log('Connected to the database');
     } catch (error) {
         console.error('Database connection error:', error);
