@@ -194,7 +194,7 @@ app.get("/api/seats/", async (req: any, res: any) => {
 })
 
 // Create Booking
-app.post("/api/booking/event_id/:event_id/seat_id/:seat_id/user_id/:user_id", async (req: any, res: any) => {
+app.post("/api/booking", async (req: any, res: any) => {
     if (Math.floor(Math.random() * 10) in [0, 1]) {
         console.log(
             'Booking failed, please try again!'
@@ -202,10 +202,7 @@ app.post("/api/booking/event_id/:event_id/seat_id/:seat_id/user_id/:user_id", as
         res.json('fail');
     } else {
         try {
-            const bookings_event_id = req.params.event_id.toString();
-            const bookings_seat_id = req.params.seat_id.toString();
-            const bookings_buyer = req.params.user_id.toString();
-            const { bookings_created, bookings_updated } = req.body
+            const { bookings_event_id, bookings_seat_id, bookings_buyer, bookings_created, bookings_updated } = req.body
 			console.log(bookings_event_id, bookings_seat_id, bookings_buyer, bookings_created, bookings_updated);
 
             const newBooking = await prisma.bookings.create({
