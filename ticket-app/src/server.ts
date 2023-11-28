@@ -2,10 +2,6 @@ import express, { Request, Response } from 'express';
 import { PrismaClient } from '../node_modules/.prisma/client'
 import bodyParser from "body-parser";
 
-var Stomp = require('stomp-client');
-var destination = '/queue/bookings';
-var StompClient = new Stomp('mq', 61613, 'admin', 'admin');
-
 const qr = require('qrcode');
 const fs = require('fs');
 const { PDFDocument, rgb } = require('pdf-lib');
@@ -64,92 +60,173 @@ app.listen(port, async () => {
     console.log(response);
 });
 
+// ActiveMQ
+var stompit = require('stompit');
+var destination = '/queue/bookings';
+
+var connectionManager = new stompit.ConnectFailover([
+    {
+        host: 'mq',
+        port: 61613,
+        resetDisconnect: false,
+        connectHeaders: {
+            'accept-version': '1.0',
+            host: '/',
+            login: 'admin',
+            passcode: 'admin',
+            'heart-beat': '100,100'
+        }
+    }
+]);
+
+connectionManager.on('error', function (error: any) {
+    var connectArgs = error.connectArgs;
+    var address = connectArgs.host + ':' + connectArgs.port;
+    console.log('Could not connect to ' + address + ': ' + error.message);
+});
+
+connectionManager.on('connecting', function (connector: any) {
+    console.log('Connecting to ' + connector.serverProperties.remoteAddress.transportPath);
+});
+
+var channelPool = new stompit.ChannelPool(connectionManager);
+var channelFactory = new stompit.ChannelFactory(connectionManager);
+
+channelPool.channel(function (error: any, channel: any) {
+    if (error) {
+        console.log('subscribe-channel error: ' + error.message);
+        return;
+    }
+
+    var subscribeHeaders = {
+        destination: destination,
+        headers: {
+            'activemq.prefetchSize': 1
+        }
+    };
+
+    channel.subscribe(subscribeHeaders, function (error: any, message: any, subscription: any) {
+        if (error) {
+            console.log('subscribe error: ' + error.message);
+            return;
+        }
+
+        message.readString('utf8', async function (error: any, body: any) {
+            if (error) {
+                console.log('read message error ' + error.message);
+                return;
+            }
+
+            // Dequeue, send, publish/enqueue
+            const dataReceived: string = body;
+
+            let response = await fetch(client_endpoint + '/api/bookings', {
+                method: 'POST',
+                body: JSON.stringify({
+                    status: true,
+                    pdf_url: url.pathToFileURL('./src/output/' + body.booking_id.toString() + '.pdf'),
+                }),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                }
+            })
+                .then((response) => {
+                    if (response.status == 200) {
+                        const updatedBooking = prisma.bookings.update({
+                            where: { bookings_id: body.booking_id, },
+                            data: {
+                                payment_url: body.webhook_url.toString()
+                            },
+                        })
+
+                        const seatID = prisma.bookings.findFirstOrThrow({
+                            where: { bookings_id: body.booking_id },
+                            include: {
+                                bookings_event: false,
+                                bookings_seat: false
+                            }
+                        })
+                        console.log(seatID);
+                        console.log(url.pathToFileURL('./src/output/' + body.booking_id.toString() + '.pdf'));
+
+                        generateQR(body.booking_id.toString())
+                            .then(() => {
+                                body.status(200).json({
+                                    'status': 'true',
+                                    'pdf_url': './src/output/' + body.booking_id.toString() + '.pdf'
+                                })
+                            })
+                            .catch((error) => {
+                                channelFactory.channel(function (error: any, channel: any) {
+
+                                    if (error) {
+                                        console.log('channel factory error: ' + error.message);
+                                        return;
+                                    }
+
+                                    var headers = {
+                                        'destination': destination
+                                    };
+
+                                    channel.send(headers, body, function (error: any) {
+                                        if (error) {
+                                            console.log('send error: ' + error.message);
+                                            return;
+                                        }
+
+                                        console.log('enqueue back');
+                                    });
+                                });
+                                body.status(500).json({
+                                    'status': 'false',
+                                    'pdf_url': ''
+                                })
+                            });
+
+                        // const seat = prisma.seat.update({
+                        //     where: {
+                        //         seat_id: seatID,
+                        //     },
+                        //     data: { 
+                        //         seat_status: "BOOKED",
+                        //     }
+                        // })
+
+                    } else {
+                        console.log("Client is unable to receive webhook!");
+                    }
+                })
+
+        });
+    });
+});
+
+// Endpoints
+
 const prisma = new PrismaClient();
 
 app.get('/webhook', async function (req: any, res: any) {
     console.log(req.body);
+    channelFactory.channel(function (error: any, channel: any) {
 
-    StompClient.connect(function () {
-        console.log("Sending to ActiveMQ");
-        StompClient.publish(destination, res.booking_id);
-        StompClient.disconnect();
-    })
-
-    console.log("HMMMMMMMMMMMMMMMMMMMMMMMMM");
-    console.log(res);
-    const dataReceived: string = res;
-    console.log("SINIIIIIIIIIIIIIIIIIIIIIIIII")
-    console.log(dataReceived);
-
-    const updatedBooking = await prisma.bookings.update({
-        where: { bookings_id: res.booking_id, },
-        data: {
-            payment_url: res.webhook_url.toString()
-        },
-    })
-
-    const seatID = await prisma.bookings.findFirstOrThrow({
-        where: { bookings_id: res.booking_id },
-        include: {
-            bookings_event: false,
-            bookings_seat: false
+        if (error) {
+            console.log('channel factory error: ' + error.message);
+            return;
         }
-    })
-    console.log(seatID);
 
-    await generateQR(res.booking_id.toString())
-        .then(() => {
-            res.status(200).json({
-                'status': 'true',
-                'pdf_url': './src/output/' + res.booking_id.toString() + '.pdf'
-            })
-        })
-        .catch((error) => {
-            res.status(500).json({
-                'status': 'false',
-                'pdf_url': ''
-            })
-        });
+        var headers = {
+            'destination': destination
+        };
 
-    console.log(url.pathToFileURL('./src/output/' + res.booking_id.toString() + '.pdf'));
-
-    let response = await fetch(client_endpoint + '/api/bookings', {
-        method: 'POST',
-        body: JSON.stringify({
-            status: true,
-            pdf_url: url.pathToFileURL('./src/output/' + res.booking_id.toString() + '.pdf'),
-        }),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        }
-    })
-        .then((response) => {
-            if (response.status === 200) {
-                StompClient.connect(function (sessionId: any) {
-                    console.log("Looking for: " + res.booking_id);
-
-                    StompClient.subscribe(destination, function (body: any, headers: any) {
-                        if (body.booking_id !== res.booking_id) {
-                            StompClient.publish(destination, JSON.stringify(body));
-                        }
-                    });
-
-                    StompClient.disconnect();
-                });
-
-                // const seat = prisma.seat.update({
-                //     where: {
-                //         seat_id: seatID,
-                //     },
-                //     data: { 
-                //         seat_status: "BOOKED",
-                //     }
-                // })
-
-            } else {
-                console.log("Client is unable to receive webhook!");
+        channel.send(headers, req.bookingId, function (error: any) {
+            if (error) {
+                console.log('send error: ' + error.message);
+                return;
             }
-        })
+
+            console.log('enqueue request');
+        });
+    });
 
     res.status(200).end();
 })
@@ -308,10 +385,9 @@ app.post("/api/booking", async (req: any, res: any) => {
         res.json('fail');
     } else {
         try {
-            const { bookings_event_id, bookings_seat_id, bookings_buyer } = req.body
-            const bookings_created = new Date();
-            const bookings_updated = new Date();
-            console.log("CREATE BOOKING\n\t", bookings_event_id, bookings_seat_id, bookings_buyer, bookings_created, bookings_updated);
+            console.log(req.body);
+            const { event_id, seat_id, user_id, bookings_created, bookings_updated } = req.body
+            console.log("CREATE BOOKING\n\t", event_id, seat_id, user_id, bookings_created, bookings_updated);
 
             const seat = await prisma.seat.findFirstOrThrow({
                 include: {
@@ -319,7 +395,7 @@ app.post("/api/booking", async (req: any, res: any) => {
                     seat_event: true
                 },
                 where: {
-                    seat_id: bookings_seat_id,
+                    seat_id: seat_id,
                 }
             })
             console.log(seat);
@@ -329,9 +405,9 @@ app.post("/api/booking", async (req: any, res: any) => {
                     data: {
                         bookings_created: new Date(bookings_created),
                         bookings_updated: new Date(bookings_updated),
-                        bookings_buyer: bookings_buyer,
-                        bookings_event_id: bookings_event_id,
-                        bookings_seat_id: bookings_seat_id,
+                        bookings_buyer: user_id,
+                        bookings_event_id: event_id,
+                        bookings_seat_id: seat_id,
                         payment_url: ""
                     },
                     select: {
@@ -351,7 +427,7 @@ app.post("/api/booking", async (req: any, res: any) => {
 
                 const seat = await prisma.seat.update({
                     where: {
-                        seat_id: bookings_seat_id,
+                        seat_id: seat_id,
                     },
                     data: {
                         seat_status: "ONGOING",
@@ -374,12 +450,14 @@ app.post("/api/booking", async (req: any, res: any) => {
                         'Content-type': 'application/json; charset=UTF-8',
                     }
                 })
-                console.log(response);
+                let responseJson = await response.json()
+                console.log(responseJson)
 
                 res.status(200).json({
                     'status': 'ONGOING',
-                    'pdf_url': ''
+                    'pdf_url': responseJson
                 })
+                console.log("Delivered the response!");
 
             } else {
                 let error_message = "SeatNotAvailable";

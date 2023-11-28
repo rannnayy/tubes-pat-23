@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"bytes"
 	"clientapp/database"
 	"clientapp/types"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -61,14 +64,21 @@ func CreateBooking(c *fiber.Ctx) error {
 		return err
 	}
 
-	agent := fiber.Post(fmt.Sprintf("%s/api/booking", os.Getenv("TICKET_APP")))
-	agent.Body(agent_body_string) // set body received by request
-	statusCode, body, _ := agent.Bytes()
-	if statusCode != 200 && statusCode != 201 {
+	res, err := http.Post(fmt.Sprintf("%s/api/booking", os.Getenv("TICKET_APP")), "application/json", bytes.NewReader(agent_body_string))
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	if res.StatusCode != 200 && res.StatusCode != 201 {
 		return &fiber.Error{
 			Code:    fiber.StatusInternalServerError,
 			Message: "Internal call error",
 		}
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(&types.ResponseTemplate{
