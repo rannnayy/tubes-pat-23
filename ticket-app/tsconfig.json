@@ -8,6 +8,11 @@
         "esModuleInterop": true,
         "skipLibCheck": true
     },
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules"]
+    "include": [
+        "src/**/*.ts",
+        "src/server.js"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

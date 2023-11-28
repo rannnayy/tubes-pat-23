@@ -17,24 +17,32 @@ services:
       timeout: 2s
       retries: 10
 
-  mq:
-    image: webcenter/activemq
-    restart: always
-    ports:
-      - '61616:61616'
-      - '8161:8161'
+  # mq:
+  #   image: webcenter/activemq
+  #   restart: always
+  #   ports:
+  #     - '61616:61616'
+  #     - '8161:8161'
+  #   healthcheck:
+  #     test: [ "NONE" ]
+
+  ticket-mq:
+    image: "rabbitmq:3-management"
     healthcheck:
-      test: [ "NONE" ]
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 5s
+      timeout: 2s
+      retries: 10
 
   ticketapp:
     build: .
     depends_on:
       db:
         condition: service_healthy
-      mq:
-        condition: service_started
+      ticket-mq:
+        condition: service_healthy
     ports:
-      - "6000:6000"
+      - "4000:4000"
     environment:
       DB_HOST: postgres
       DB_USER: postgres
@@ -42,6 +50,7 @@ services:
       DB_DBNAME: ticket
       DB_PORT: 5432
       DATABASE_URL: postgresql://postgres:postgres@db:5432/ticket?schema=public
+      RABBITMQ_HOST: ticket-mq
       WAIT_HOSTS: postgres:5432
 
   apache:
@@ -51,7 +60,7 @@ services:
     volumes:
       # - ./src/output/:/var/www/html/src/output
       # - .:/var/www/html/
-      - ./src/output:/usr/local/apache2/htdocs
+      - ./public/output:/usr/local/apache2/htdocs
       # - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
 
 networks:
