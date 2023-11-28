@@ -49,25 +49,12 @@ func CreateBooking(c *fiber.Ctx) error {
 		BookingsCreated string `json:"bookings_created"`
 		BookingsUpdated string `json:"bookings_updated"`
 	}{
+		EventId:         fmt.Sprintf("%x-%x-%x-%x-%x", retVal.ID.Bytes[0:4], retVal.ID.Bytes[4:6], retVal.ID.Bytes[6:8], retVal.ID.Bytes[8:10], retVal.ID.Bytes[10:16]),
+		SeatId:          fmt.Sprintf("%x-%x-%x-%x-%x", retVal.ChairID.Bytes[0:4], retVal.ChairID.Bytes[4:6], retVal.ChairID.Bytes[6:8], retVal.ChairID.Bytes[8:10], retVal.ChairID.Bytes[10:16]),
+		UserId:          fmt.Sprintf("%x-%x-%x-%x-%x", retVal.UserID.Bytes[0:4], retVal.UserID.Bytes[4:6], retVal.UserID.Bytes[6:8], retVal.UserID.Bytes[8:10], retVal.UserID.Bytes[10:16]),
 		BookingsCreated: retVal.CreatedAt.Time.Format("2006-01-02"),
 		BookingsUpdated: retVal.UpdatedAt.Time.Format("2006-01-02"),
 	}
-
-	var temp []byte
-	if temp, err = retVal.ID.MarshalJSON(); err != nil {
-		return err
-	}
-	agent_body.EventId = string(temp)
-
-	if temp, err = retVal.ChairID.MarshalJSON(); err != nil {
-		return err
-	}
-	agent_body.SeatId = string(temp)
-
-	if temp, err = retVal.UserID.MarshalJSON(); err != nil {
-		return err
-	}
-	agent_body.UserId = string(temp)
 
 	var agent_body_string []byte
 	if agent_body_string, err = json.Marshal(agent_body); err != nil {
