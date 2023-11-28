@@ -32,7 +32,7 @@ services:
       db:
         condition: service_healthy
       mq:
-        condition: service_healthy
+        condition: service_started
     ports:
       - "4000:4000"
     environment:
@@ -41,7 +41,7 @@ services:
       DB_PASSWORD: postgres
       DB_DBNAME: ticket
       DB_PORT: 5432
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticket?schema=public
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/ticket?schema=public
       WAIT_HOSTS: postgres:5432
 
 # version: '3.9'

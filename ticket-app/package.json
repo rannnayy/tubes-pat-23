@@ -4,7 +4,7 @@
   "description": "Dokumentasi ini tidak strict, silahkan ubah sesuai yang diinginkan, yang penting ada terdokumentasi interface dari masing2 app",
   "main": "index.js",
   "scripts": {
-    "start": "prisma db pull && prisma generate && ts-node src/server.ts"
+    "start": "prisma db push && prisma generate && ts-node src/server.ts"
   },
   "author": "Rani",
   "license": "ISC",
