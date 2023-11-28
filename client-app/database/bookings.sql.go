@@ -21,9 +21,9 @@ RETURNING id, user_id, event_id, chair_id, pdf_url, status, created_at, updated_
 `
 
 type CreateBookingParams struct {
-	UserID  pgtype.UUID `db:"user_id" json:"user_id" validate:"required,numeric,min=1"`
-	EventID pgtype.UUID `db:"event_id" json:"event_id" validate:"required,uuid4"`
-	ChairID pgtype.UUID `db:"chair_id" json:"chair_id" validate:"required,uuid4"`
+	UserID  pgtype.UUID `db:"user_id" json:"user_id" validate:"required"`
+	EventID pgtype.UUID `db:"event_id" json:"event_id" validate:"required"`
+	ChairID pgtype.UUID `db:"chair_id" json:"chair_id" validate:"required"`
 }
 
 func (q *Queries) CreateBooking(ctx context.Context, arg CreateBookingParams) (Booking, error) {
