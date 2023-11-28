@@ -7,12 +7,14 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      db:
+      payment-db:
         condition: service_healthy
-      rabbitmq:
+      payment-mq:
         condition: service_healthy
+    networks:
+      - common_network
 
-  db:
+  payment-db:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: mysecretpassword
@@ -29,7 +31,7 @@ services:
     networks:
       - common_network
 
-  rabbitmq:
+  payment-mq:
     image: "rabbitmq:3-management"
     ports:
       - "5672:5672"

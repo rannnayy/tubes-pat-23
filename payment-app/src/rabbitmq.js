@@ -16,6 +16,7 @@ const rabbitMQ = {
             await this.setupConsumer();
             return this.connection;
         } catch (err) {
+            console.log(err)
             this.handleConnectionError(err);
         }
     },
