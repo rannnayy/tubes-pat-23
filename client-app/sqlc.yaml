@@ -17,10 +17,10 @@ sql:
           - column: users.password
             go_struct_tag: validate:"required,alphanum"
           - column: bookings.user_id
-            go_struct_tag: validate:"required,numeric,min=1"
+            go_struct_tag: validate:"required"
           - column: bookings.event_id
-            go_struct_tag: validate:"required,uuid4"
+            go_struct_tag: validate:"required"
           - column: bookings.chair_id
-            go_struct_tag: validate:"required,uuid4"
+            go_struct_tag: validate:"required"
           - column: bookings.status
             go_struct_tag: validate:"required,bookingstatus_custom_validation"
