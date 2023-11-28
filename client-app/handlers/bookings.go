@@ -1,16 +1,17 @@
 package handlers
 
 import (
+	"bytes"
 	"clientapp/database"
 	"clientapp/types"
 	"encoding/json"
 	"fmt"
-	"net"
+	"io"
+	"net/http"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/valyala/fasthttp/fasthttputil"
 )
 
 // {event_id: "", chair_id: ""}
@@ -63,16 +64,21 @@ func CreateBooking(c *fiber.Ctx) error {
 		return err
 	}
 
-	ln := fasthttputil.NewInmemoryListener()
-	agent := fiber.Post(fmt.Sprintf("%s/api/booking", os.Getenv("TICKET_APP")))
-	agent.BodyString(string(agent_body_string)) // set body received by request
-	agent.HostClient.Dial = func(addr string) (net.Conn, error) { return ln.Dial() }
-	statusCode, body, _ := agent.String()
-	if statusCode != 200 && statusCode != 201 {
+	res, err := http.Post(fmt.Sprintf("%s/api/booking", os.Getenv("TICKET_APP")), "application/json", bytes.NewReader(agent_body_string))
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	if res.StatusCode != 200 && res.StatusCode != 201 {
 		return &fiber.Error{
 			Code:    fiber.StatusInternalServerError,
 			Message: "Internal call error",
 		}
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(&types.ResponseTemplate{
