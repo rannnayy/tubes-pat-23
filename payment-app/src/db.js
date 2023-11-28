@@ -10,6 +10,10 @@ const Log = sequelize.define('Log', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    bookingId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     status: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -21,18 +25,18 @@ const Log = sequelize.define('Log', {
 });
 
 const Invoice = sequelize.define('Invoice', {
-    amount: {
-        type: DataTypes.DECIMAL,
-        allowNull: false,
-    },
-    customer_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     invoiceId: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
+    },
+    bookingId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    amount: {
+        type: DataTypes.DECIMAL,
+        allowNull: false,
     },
     webhookUrl: {
         type: DataTypes.STRING,
@@ -43,7 +47,8 @@ const Invoice = sequelize.define('Invoice', {
 (async () => {
     try {
         await sequelize.authenticate();
-        await sequelize.sync(); // Synchronize the database with the model
+        await sequelize.sync({ alter: true }); // Synchronize the database with the model
+        // update the databse with model
         console.log('Connected to the database');
     } catch (error) {
         console.error('Database connection error:', error);
