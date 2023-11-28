@@ -11,19 +11,18 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    # Please modify .env file for docker
-    networks:
-      - mynetwork
 
   db:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: mysecretpassword
       MYSQL_DATABASE: tubes2
-    networks:
-      - mynetwork
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -pmysecretpassword"]
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -u root -pmysecretpassword"
+        ]
       interval: 5s
       timeout: 2s
       retries: 10
@@ -33,13 +32,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    networks:
-      - mynetwork
     healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
+      test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 5s
       timeout: 2s
       retries: 10
-
-networks:
-  mynetwork:
