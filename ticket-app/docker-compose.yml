@@ -44,6 +44,16 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/ticket?schema=public
       WAIT_HOSTS: postgres:5432
 
+  apache:
+    image: httpd
+    ports:
+      - "80:80"
+    volumes:
+      # - ./src/output/:/var/www/html/src/output
+      # - .:/var/www/html/
+      - ./src/output:/usr/local/apache2/htdocs
+      # - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+
 networks:
   default:
     name: my-network
