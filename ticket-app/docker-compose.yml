@@ -12,10 +12,12 @@ services:
     volumes:
       - ./data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 5s
       timeout: 2s
       retries: 10
+    networks:
+      - common_network
 
   mq:
     image: webcenter/activemq
@@ -24,7 +26,9 @@ services:
       - '61616:61616'
       - '8161:8161'
     healthcheck:
-      test: ["NONE"]
+      test: [ "NONE" ]
+    networks:
+      - common_network
 
   ticketapp:
     build: .
@@ -43,3 +47,8 @@ services:
       DB_PORT: 5432
       DATABASE_URL: postgresql://postgres:postgres@db:5432/ticket?schema=public
       WAIT_HOSTS: postgres:5432
+    networks:
+      - common_network
+
+networks:
+  common_network:

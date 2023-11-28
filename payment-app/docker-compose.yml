@@ -1,6 +1,6 @@
 version: '3'
 services:
-  app:
+  payment:
     build:
       context: .
       dockerfile: Dockerfile
@@ -26,6 +26,8 @@ services:
       interval: 5s
       timeout: 2s
       retries: 10
+    networks:
+      - common_network
 
   rabbitmq:
     image: "rabbitmq:3-management"
@@ -37,3 +39,8 @@ services:
       interval: 5s
       timeout: 2s
       retries: 10
+    networks:
+      - common_network
+
+networks:
+  common_network:
