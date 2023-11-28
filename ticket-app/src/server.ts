@@ -10,34 +10,35 @@ const qr = require('qrcode');
 const fs = require('fs');
 const { PDFDocument, rgb } = require('pdf-lib');
 
-async function generateQR(urlToEncode : string) {
-    const imagePath = './src/output/'+urlToEncode+'.png'
-    const pdfPath = './src/output/'+urlToEncode+'.pdf'
+async function generateQR(urlToEncode: string) {
+    const imagePath = './src/output/' + urlToEncode + '.png'
+    const pdfPath = './src/output/' + urlToEncode + '.pdf'
     await qr.toFile(imagePath, urlToEncode, { type: 'image/png' });
-	const image = await fs.promises.readFile(imagePath, );
-	const pdfDoc = await PDFDocument.create();
-	const page = pdfDoc.addPage([400, 400]);
-	const imageEmbed = await pdfDoc.embedPng(image);
-	const { width, height } = imageEmbed.scaleToFit(
-		page.getWidth(),
-		page.getHeight(),
-	);
+    const image = await fs.promises.readFile(imagePath,);
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([400, 400]);
+    const imageEmbed = await pdfDoc.embedPng(image);
+    const { width, height } = imageEmbed.scaleToFit(
+        page.getWidth(),
+        page.getHeight(),
+    );
 
-	page.drawImage(imageEmbed, {
-		x: page.getWidth() / 2 - width / 2,
-		y: page.getHeight() / 2 - height / 2,
-		width,
-		height,
-		color: rgb(0, 0, 0),
-	});
-	const pdfBytes = await pdfDoc.save();
-	await fs.promises.writeFile(pdfPath, pdfBytes);
+    page.drawImage(imageEmbed, {
+        x: page.getWidth() / 2 - width / 2,
+        y: page.getHeight() / 2 - height / 2,
+        width,
+        height,
+        color: rgb(0, 0, 0),
+    });
+    const pdfBytes = await pdfDoc.save();
+    await fs.promises.writeFile(pdfPath, pdfBytes);
 }
 
 const url = require('url');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.json());
 const port = 6000;
 
 var payment_endpoint = 'http://payment:5000';
@@ -47,9 +48,10 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello, World!');
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
     console.log(`Server running at http://ticketapp:${port}`);
-    let response = fetch(payment_endpoint+'/invoice', {
+    console.log(payment_endpoint + '/invoice');
+    let response = await fetch(payment_endpoint + '/invoice', {
         method: 'POST',
         body: JSON.stringify({
             amount: 100,
@@ -64,7 +66,7 @@ app.listen(port, () => {
 
 const prisma = new PrismaClient();
 
-app.get('/webhook', async function(req: any, res: any) {
+app.get('/webhook', async function (req: any, res: any) {
     console.log(req.body);
 
     StompClient.connect(function () {
@@ -72,13 +74,13 @@ app.get('/webhook', async function(req: any, res: any) {
         StompClient.publish(destination, res.booking_id);
         StompClient.disconnect();
     })
-    
+
     console.log("HMMMMMMMMMMMMMMMMMMMMMMMMM");
     console.log(res);
-    const dataReceived : string = res;
+    const dataReceived: string = res;
     console.log("SINIIIIIIIIIIIIIIIIIIIIIIIII")
     console.log(dataReceived);
-    
+
     const updatedBooking = await prisma.bookings.update({
         where: { bookings_id: res.booking_id, },
         data: {
@@ -96,58 +98,58 @@ app.get('/webhook', async function(req: any, res: any) {
     console.log(seatID);
 
     await generateQR(res.booking_id.toString())
-    .then(() => {
-        res.status(200).json({
-            'status': 'true',
-            'pdf_url': './src/output/'+res.booking_id.toString()+'.pdf'
+        .then(() => {
+            res.status(200).json({
+                'status': 'true',
+                'pdf_url': './src/output/' + res.booking_id.toString() + '.pdf'
+            })
         })
-    })
-    .catch((error) => {
-        res.status(500).json({
-            'status': 'false',
-            'pdf_url': ''
-        })
-    });
+        .catch((error) => {
+            res.status(500).json({
+                'status': 'false',
+                'pdf_url': ''
+            })
+        });
 
-    console.log(url.pathToFileURL('./src/output/'+res.booking_id.toString()+'.pdf'));
+    console.log(url.pathToFileURL('./src/output/' + res.booking_id.toString() + '.pdf'));
 
-    let response = await fetch(client_endpoint+'/api/bookings', {
+    let response = await fetch(client_endpoint + '/api/bookings', {
         method: 'POST',
         body: JSON.stringify({
             status: true,
-            pdf_url: url.pathToFileURL('./src/output/'+res.booking_id.toString()+'.pdf'),
+            pdf_url: url.pathToFileURL('./src/output/' + res.booking_id.toString() + '.pdf'),
         }),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         }
     })
-    .then((response) => {
-        if (response.status === 200) {
-            StompClient.connect(function (sessionId: any) {
-                console.log("Looking for: "+ res.booking_id);
-            
-                StompClient.subscribe(destination, function (body: any, headers: any) {
-                    if (body.booking_id !== res.booking_id) {
-                        StompClient.publish(destination, JSON.stringify(body));
-                    }
-                });
-        
-                StompClient.disconnect();
-            });
-            
-            // const seat = prisma.seat.update({
-            //     where: {
-            //         seat_id: seatID,
-            //     },
-            //     data: { 
-            //         seat_status: "BOOKED",
-            //     }
-            // })
+        .then((response) => {
+            if (response.status === 200) {
+                StompClient.connect(function (sessionId: any) {
+                    console.log("Looking for: " + res.booking_id);
 
-        } else {
-            console.log("Client is unable to receive webhook!");
-        }
-    })
+                    StompClient.subscribe(destination, function (body: any, headers: any) {
+                        if (body.booking_id !== res.booking_id) {
+                            StompClient.publish(destination, JSON.stringify(body));
+                        }
+                    });
+
+                    StompClient.disconnect();
+                });
+
+                // const seat = prisma.seat.update({
+                //     where: {
+                //         seat_id: seatID,
+                //     },
+                //     data: { 
+                //         seat_status: "BOOKED",
+                //     }
+                // })
+
+            } else {
+                console.log("Client is unable to receive webhook!");
+            }
+        })
 
     res.status(200).end();
 })
@@ -155,35 +157,35 @@ app.get('/webhook', async function(req: any, res: any) {
 app.post("/api/events", async (req: any, res: any) => {
     try {
         const { event_name, event_date, event_desc, event_num_seat } = req.body
-		let seats = [];
-		for (let i=0; i < event_num_seat; i++) {
-			const newSeat = 'OPEN'
-			seats.push(JSON.stringify(newSeat));
-		}
+        let seats = [];
+        for (let i = 0; i < event_num_seat; i++) {
+            const newSeat = 'OPEN'
+            seats.push(JSON.stringify(newSeat));
+        }
         const newEvent = await prisma.event.create({
-			select: {
-				event_id: true,
-				event_name: true,
-				event_date: true,
-				event_desc: true,
-				event_num_seat: true,
-				event_bookings: true,
-				event_seat: true
-			},
+            select: {
+                event_id: true,
+                event_name: true,
+                event_date: true,
+                event_desc: true,
+                event_num_seat: true,
+                event_bookings: true,
+                event_seat: true
+            },
             data: {
                 event_name,
                 event_date: new Date(event_date),
                 event_desc,
                 event_num_seat,
-				event_bookings: {},
-				event_seat: {
-					create: seats.map((seat_status: string) => ({
-						seat_status: "OPEN",
-					}))
-				}
+                event_bookings: {},
+                event_seat: {
+                    create: seats.map((seat_status: string) => ({
+                        seat_status: "OPEN",
+                    }))
+                }
             },
         })
-		
+
         res.json(newEvent)
     } catch (error: any) {
         console.log(error.message)
@@ -193,11 +195,11 @@ app.post("/api/events", async (req: any, res: any) => {
     }
 })
 
-app.get("/api/events/event_id/:event_id", async (req: any, res: any) => {
+app.get("/api/events/:event_id", async (req: any, res: any) => {
     try {
         const event = await prisma.event.findFirstOrThrow({
             where: { event_id: req.params.event_id?.toString() },
-            include: { event_bookings: false },
+            include: { event_bookings: true, event_seat: true },
         })
         res.json(event)
     } catch (error) {
@@ -210,11 +212,12 @@ app.get("/api/events/event_id/:event_id", async (req: any, res: any) => {
 app.get("/api/events/", async (req: any, res: any) => {
     try {
         const event = await prisma.event.findMany({
-            include: { 
-				event_bookings: true,
-				event_seat: true
-			},
+            include: {
+                event_bookings: true,
+                event_seat: true
+            },
         })
+        console.log(event)
         res.json(event)
     } catch (error) {
         res.status(500).json({
@@ -223,33 +226,39 @@ app.get("/api/events/", async (req: any, res: any) => {
     }
 })
 
-app.put("/api/events/event_id/:event_id", async (req: any, res: any) => {
+app.put("/api/events/:event_id", async (req: any, res: any) => {
     try {
         const { event_name, event_date, event_desc, event_num_seat } = req.body;
-		console.log(event_name, event_date, event_desc, event_num_seat);
+        console.log(event_name, event_date, event_desc, event_num_seat);
         const event_id = req.params.event_id?.toString()
-		console.log(event_id);
+        console.log(event_id);
 
         const updatedEvent = await prisma.event.update({
             where: { event_id: event_id, },
             data: {
-				event_id: event_id,
+                event_id: event_id,
                 event_name: event_name,
-                event_date: event_date,
+                event_date: new Date(event_date),
                 event_desc: event_desc,
                 event_num_seat: event_num_seat,
-            },
+            }
         })
-		console.log(updatedEvent);
-        res.json(updatedEvent)
+
+        const refreshedEvent = await prisma.event.findUnique({
+            where: { event_id: event_id },
+        });
+        console.log(refreshedEvent)
+
+        res.json(refreshedEvent)
     } catch (error) {
+        console.log(error)
         res.status(500).json({
-        	message: "Something went wrong",
+            message: "Something went wrong",
         })
     }
 })
 
-app.delete("/api/events/event_id/:event_id", async (req: any, res: any) => {
+app.delete("/api/events/:event_id", async (req: any, res: any) => {
     try {
         const event_id = req.params.event_id?.toString()
         const deletedEvent = await prisma.event.delete({
@@ -257,6 +266,7 @@ app.delete("/api/events/event_id/:event_id", async (req: any, res: any) => {
         })
         res.json(deletedEvent)
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             message: "Something went wrong",
         })
@@ -298,11 +308,13 @@ app.post("/api/booking", async (req: any, res: any) => {
         res.json('fail');
     } else {
         try {
-            const { bookings_event_id, bookings_seat_id, bookings_buyer, bookings_created, bookings_updated } = req.body
-			console.log("CREATE BOOKING\n\t", bookings_event_id, bookings_seat_id, bookings_buyer, bookings_created, bookings_updated);
-            
+            const { bookings_event_id, bookings_seat_id, bookings_buyer } = req.body
+            const bookings_created = new Date();
+            const bookings_updated = new Date();
+            console.log("CREATE BOOKING\n\t", bookings_event_id, bookings_seat_id, bookings_buyer, bookings_created, bookings_updated);
+
             const seat = await prisma.seat.findFirstOrThrow({
-                include: { 
+                include: {
                     seat_bookings: true,
                     seat_event: true
                 },
@@ -341,18 +353,18 @@ app.post("/api/booking", async (req: any, res: any) => {
                     where: {
                         seat_id: bookings_seat_id,
                     },
-                    data: { 
+                    data: {
                         seat_status: "ONGOING",
                     }
                 })
-                
-                console.log(payment_endpoint+'/invoice');
+
+                console.log(payment_endpoint + '/invoice');
                 console.log({
                     amount: 100,
                     bookingId: booking_id
                 });
 
-                let response = await fetch(payment_endpoint+'/invoice', {
+                let response = await fetch(payment_endpoint + '/invoice', {
                     method: 'POST',
                     body: JSON.stringify({
                         amount: 100,
@@ -413,27 +425,14 @@ app.get("/api/bookings/:bookings_id", async (req: any, res: any) => {
     try {
         const bookings_id = req.params.bookings_id
         const bookings = await prisma.bookings.findMany({
-            where: { bookings_id, }
-        })
-
-        res.json(bookings)
-    } catch (error) {
-        res.status(500).json({
-            message: "Something went wrong",
-        })
-    }
-})
-
-app.get("/api/bookings/:bookings_id/status", async (req: any, res: any) => {
-    try {
-        const bookings_id = req.params.bookings_id
-        const bookings = await prisma.bookings.findMany({
             where: { bookings_id, },
-            include: { bookings_seat: {
-                select: {
-                    seat_status: true,
+            include: {
+                bookings_seat: {
+                    select: {
+                        seat_status: true,
+                    }
                 }
-            }},
+            },
         })
 
         res.json(bookings)
