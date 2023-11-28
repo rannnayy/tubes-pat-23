@@ -16,8 +16,6 @@ services:
       interval: 5s
       timeout: 2s
       retries: 10
-    networks:
-      - common_network
 
   mq:
     image: webcenter/activemq
@@ -27,8 +25,6 @@ services:
       - '8161:8161'
     healthcheck:
       test: [ "NONE" ]
-    networks:
-      - common_network
 
   ticketapp:
     build: .
@@ -47,8 +43,8 @@ services:
       DB_PORT: 5432
       DATABASE_URL: postgresql://postgres:postgres@db:5432/ticket?schema=public
       WAIT_HOSTS: postgres:5432
-    networks:
-      - common_network
 
 networks:
-  common_network:
+  default:
+    name: my-network
+    external: true

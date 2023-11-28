@@ -10,8 +10,6 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: clientapp
     restart: always
-    networks:
-      - common_network
 
   clientapp:
     build: .
@@ -30,8 +28,6 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@postgres/clientapp
       TICKET_APP: http://localhost:3001
       WAIT_HOSTS: postgres:5432
-    networks:
-      - common_network
     # restart: always
 volumes:
   postgres:
@@ -39,4 +35,6 @@ volumes:
 
 
 networks:
-  common_network:
+  default:
+    name: my-network
+    external: true
