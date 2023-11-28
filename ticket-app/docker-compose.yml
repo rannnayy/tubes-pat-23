@@ -11,19 +11,28 @@ services:
       POSTGRES_DB: ticket
     volumes:
       - ./data:/var/lib/postgresql/data
-  
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+
   mq:
     image: webcenter/activemq
     restart: always
     ports:
       - '61616:61616'
       - '8161:8161'
-  
+    healthcheck:
+      test: ["NONE"]
+
   ticketapp:
     build: .
     depends_on:
-      - db
-      - mq
+      db:
+        condition: service_healthy
+      mq:
+        condition: service_healthy
     ports:
       - "4000:4000"
     environment:
@@ -34,3 +43,40 @@ services:
       DB_PORT: 5432
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticket?schema=public
       WAIT_HOSTS: postgres:5432
+
+# version: '3.9'
+# services:
+#   db:
+#     image: postgres
+#     restart: always
+#     ports:
+#       - '5432:5432'
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#       POSTGRES_DB: ticket
+#     volumes:
+#       - ./data:/var/lib/postgresql/data
+  
+#   mq:
+#     image: webcenter/activemq
+#     restart: always
+#     ports:
+#       - '61616:61616'
+#       - '8161:8161'
+  
+#   ticketapp:
+#     build: .
+#     depends_on:
+#       - db
+#       - mq
+#     ports:
+#       - "4000:4000"
+#     environment:
+#       DB_HOST: postgres
+#       DB_USER: postgres
+#       DB_PASSWORD: postgres
+#       DB_DBNAME: ticket
+#       DB_PORT: 5432
+#       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticket?schema=public
+#       WAIT_HOSTS: postgres:5432

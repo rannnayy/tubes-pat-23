@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 RUN npm install
-RUN prisma generate
+RUN npx prisma generate
 COPY src/ ./src/
 COPY .env ./
 EXPOSE 4000
