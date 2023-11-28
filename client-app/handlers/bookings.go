@@ -4,6 +4,8 @@ import (
 	"clientapp/database"
 	"clientapp/types"
 	"encoding/json"
+	"fmt"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -35,13 +37,56 @@ func CreateBooking(c *fiber.Ctx) error {
 		return err
 	}
 
-	if _, err := types.DbInstance.Queries.CreateBooking(types.DbInstance.Ctx, *booking); err != nil {
+	var retVal database.Booking
+	if retVal, err = types.DbInstance.Queries.CreateBooking(types.DbInstance.Ctx, *booking); err != nil {
 		return err
+	}
+
+	agent_body := struct {
+		EventId         string `json:"event_id"`
+		SeatId          string `json:"seat_id"`
+		UserId          string `json:"user_id"`
+		BookingsCreated string `json:"bookings_created"`
+		BookingsUpdated string `json:"bookings_updated"`
+	}{
+		BookingsCreated: retVal.CreatedAt.Time.Format("2006-01-02"),
+		BookingsUpdated: retVal.UpdatedAt.Time.Format("2006-01-02"),
+	}
+
+	var temp []byte
+	if temp, err = retVal.ID.MarshalJSON(); err != nil {
+		return err
+	}
+	agent_body.EventId = string(temp)
+
+	if temp, err = retVal.ChairID.MarshalJSON(); err != nil {
+		return err
+	}
+	agent_body.SeatId = string(temp)
+
+	if temp, err = retVal.UserID.MarshalJSON(); err != nil {
+		return err
+	}
+	agent_body.UserId = string(temp)
+
+	var agent_body_string []byte
+	if agent_body_string, err = json.Marshal(agent_body); err != nil {
+		return err
+	}
+
+	agent := fiber.Post(fmt.Sprintf("%s/api/booking", os.Getenv("TICKET_APP")))
+	agent.Body(agent_body_string) // set body received by request
+	statusCode, body, _ := agent.Bytes()
+	if statusCode != 200 && statusCode != 201 {
+		return &fiber.Error{
+			Code:    fiber.StatusInternalServerError,
+			Message: "Internal call error",
+		}
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(&types.ResponseTemplate{
 		Success: true,
-		Message: "Booking Created",
+		Message: string(body),
 	})
 }
 
