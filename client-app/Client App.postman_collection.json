@@ -1,0 +1,620 @@
+{
+	"info": {
+		"_postman_id": "60012e6d-adb5-4715-bbad-8c9f2409013f",
+		"name": "Client App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31387940",
+		"_collection_link": "https://blue-resonance-231811.postman.co/workspace/349940a7-e510-4d54-8b9c-e6266107ef7f/collection/12276637-60012e6d-adb5-4715-bbad-8c9f2409013f?action=share&source=collection_link&creator=31387940"
+	},
+	"item": [
+		{
+			"name": "Hello World",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Hello World",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								""
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 14:56:00 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/plain; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "13"
+						}
+					],
+					"cookie": [],
+					"body": "Hello, World!"
+				}
+			]
+		},
+		{
+			"name": "User Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"dimass\",\r\n    \"password\": \"dimass\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/register",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "User Register",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"dimass\",\r\n    \"password\": \"dimass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/users/register",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:51:19 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "41"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"User Created\"\n}"
+				}
+			]
+		},
+		{
+			"name": "User Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"dimas\",\r\n    \"password\": \"dimas\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "User Login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"dimas\",\r\n    \"password\": \"dimas\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/users/login",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:27:37 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "42"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "session_id=2a6c1bae-bf5b-4966-8e97-bf43b6e46f9b; max-age=86400; path=/; SameSite=Lax"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Login success\"\n}"
+				}
+			]
+		},
+		{
+			"name": "User Update Password",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\": \"dimas\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/password",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"password"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "User Update Password",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"dimas\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/users/password",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"password"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:51:38 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "41"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"User Updated\"\n}"
+				}
+			]
+		},
+		{
+			"name": "User Delete Self",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/users/selfdestruct",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"selfdestruct"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "User Delete Self",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/users/selfdestruct",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"selfdestruct"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:52:03 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "41"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"User Deleted\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Booking Create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4283\", \r\n    \"chair_id\": \"4ae62fec-c401-4817-bd93-afefc773f70a\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/bookings/",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bookings",
+						""
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Failure, Booking will still get created with pdf explaining failure. See GET BOOKING SELF",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4133\", \r\n    \"chair_id\": \"1e32815a-5027-4abe-8aed-54f909d9f040\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/bookings/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"bookings",
+								""
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:31:55 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "63"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": false,\n    \"message\": \"Booking failed, please try again!\"\n}"
+				},
+				{
+					"name": "Booking Create",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4283\", \r\n    \"chair_id\": \"4ae62fec-c401-4817-bd93-afefc773f70a\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/bookings/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"bookings",
+								""
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:54:07 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "511"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"{\\\"success\\\":true,\\\"message\\\":\\\"Booking successful!\\\",\\\"status\\\":\\\"ONGOING\\\",\\\"bookings_id\\\":\\\"199cd4a4-1829-4b91-84ca-cca28d61adf3\\\",\\\"bookings_event_id\\\":\\\"a554ea02-99e1-4d2d-8f98-0811d70a4283\\\",\\\"bookings_seat_id\\\":\\\"4ae62fec-c401-4817-bd93-afefc773f70a\\\",\\\"payment_url\\\":\\\"http://localhost:5000/webhook?invoiceId=701d84a4-02df-4a9d-badd-25645edf9a20\\\\u0026bookingId=199cd4a4-1829-4b91-84ca-cca28d61adf3\\\",\\\"invoice_id\\\":\\\"701d84a4-02df-4a9d-badd-25645edf9a20\\\",\\\"pdf_url\\\":\\\"\\\"}\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Booking Get Self",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/bookings/",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bookings",
+						""
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Booking Get Self",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/bookings/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"bookings",
+								""
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:54:22 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "11937"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"[{\\\"id\\\":\\\"d4f89fbe-a557-4e35-a0ba-967c6987ea1f\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T03:39:55.530801Z\\\",\\\"updated_at\\\":\\\"2023-11-29T03:39:55.530801Z\\\"},{\\\"id\\\":\\\"81ed0f1b-d62c-4c8c-a9cc-3836d998b04c\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T03:42:27.116591Z\\\",\\\"updated_at\\\":\\\"2023-11-29T03:42:27.116591Z\\\"},{\\\"id\\\":\\\"dbdcd3c4-c45c-43de-9307-1bcc94e8192b\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T03:44:03.564325Z\\\",\\\"updated_at\\\":\\\"2023-11-29T03:44:03.564325Z\\\"},{\\\"id\\\":\\\"2495c534-4c09-4384-a5e6-278a7c7c9d0e\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T03:53:50.649733Z\\\",\\\"updated_at\\\":\\\"2023-11-29T03:53:50.649733Z\\\"},{\\\"id\\\":\\\"d45d2e8c-7b5e-462a-b9aa-fa3947dcfb3b\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T03:54:12.52418Z\\\",\\\"updated_at\\\":\\\"2023-11-29T03:54:12.52418Z\\\"},{\\\"id\\\":\\\"929741aa-baf0-4400-9b60-61517459b051\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:01:26.035953Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:01:26.035953Z\\\"},{\\\"id\\\":\\\"7d1aa4a5-d4fa-4cd8-87ad-48f56edcc56c\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:08:01.329742Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:08:01.329742Z\\\"},{\\\"id\\\":\\\"9c791fbc-bfe6-472d-b421-1400898a7805\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:11:20.141639Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:11:20.141639Z\\\"},{\\\"id\\\":\\\"0b99102f-d45d-4f29-b603-f8775e6fa1fe\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:16:15.465961Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:16:15.465961Z\\\"},{\\\"id\\\":\\\"21b239a7-93ec-4a2a-92b3-b4c55f41e234\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:19:12.888379Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:19:12.888379Z\\\"},{\\\"id\\\":\\\"7b7e358d-377c-4b1d-94e2-fa7039294d14\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"0c331db2-77fc-4e92-8822-b6b038b9d787\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:19:46.333288Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:19:46.333288Z\\\"},{\\\"id\\\":\\\"05b0398f-b848-4491-9fb5-ad5f35279a44\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"0c331db2-77fc-4e92-8822-b6b038b9d787\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:20:52.5023Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:20:52.5023Z\\\"},{\\\"id\\\":\\\"12e4defd-0b9e-46a1-a1ca-17076072fda4\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"0c331db2-77fc-4e92-8822-b6b038b9d787\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:22:12.41891Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:22:12.41891Z\\\"},{\\\"id\\\":\\\"e2f358c8-4bba-42c0-9973-a73721aa8a0a\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"0c331db2-77fc-4e92-8822-b6b038b9d787\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:22:15.550311Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:22:15.550311Z\\\"},{\\\"id\\\":\\\"5d1b6d6b-247d-46da-9523-31c9cd142bc8\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"0c331db2-77fc-4e92-8822-b6b038b9d787\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:22:27.972231Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:22:27.972231Z\\\"},{\\\"id\\\":\\\"02fedec0-2414-4fcb-ae73-0ff02d5c004e\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"0c331db2-77fc-4e92-8822-b6b038b9d787\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:22:30.835919Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:22:30.835919Z\\\"},{\\\"id\\\":\\\"235c0040-1475-429f-ac42-19f24b884d26\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"0c331db2-77fc-4e92-8822-b6b038b9d787\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:22:52.198135Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:22:52.198135Z\\\"},{\\\"id\\\":\\\"f9ca7477-aa45-489b-98e6-547da17252fa\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"c69f341a-6049-4f0a-a31e-6324915254d9\\\",\\\"chair_id\\\":\\\"58aefda0-1655-4d1c-89e3-5c8be3cbaba6\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:28:11.815031Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:28:11.815031Z\\\"},{\\\"id\\\":\\\"866319f6-cd0f-4037-ba9b-394c1b927a82\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"c69f341a-6049-4f0a-a31e-6324915254d9\\\",\\\"chair_id\\\":\\\"58aefda0-1655-4d1c-89e3-5c8be3cbaba6\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T04:28:46.167313Z\\\",\\\"updated_at\\\":\\\"2023-11-29T04:28:46.167313Z\\\"},{\\\"id\\\":\\\"d3ccc5db-fa6d-4a63-93da-6015c450c022\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"de41dd7a-6318-4788-b48c-488785173785\\\",\\\"chair_id\\\":\\\"c01d80df-e4d1-4622-bdf6-ad207fb329e2\\\",\\\"pdf_url\\\":\\\"https://google.com\\\",\\\"status\\\":\\\"success\\\",\\\"created_at\\\":\\\"2023-11-29T03:38:51.654518Z\\\",\\\"updated_at\\\":\\\"2023-11-29T06:34:56.338841Z\\\"},{\\\"id\\\":\\\"04fae403-0680-4bc1-91ef-16e9499a1b2e\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"c6652260-add2-4386-90d7-4af77b3c4271\\\",\\\"pdf_url\\\":\\\"localhost/04fae403-0680-4bc1-91ef-16e9499a1b2e.pdf\\\",\\\"status\\\":\\\"failure\\\",\\\"created_at\\\":\\\"2023-11-29T06:29:15.971022Z\\\",\\\"updated_at\\\":\\\"2023-11-29T08:01:56.914707Z\\\"},{\\\"id\\\":\\\"c317bf7d-c7f5-4db9-95b0-eec3929d1a43\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"af907a0a-c040-430b-bba0-66e938c8cccb\\\",\\\"pdf_url\\\":\\\"localhost/c317bf7d-c7f5-4db9-95b0-eec3929d1a43.pdf\\\",\\\"status\\\":\\\"success\\\",\\\"created_at\\\":\\\"2023-11-29T07:27:07.796472Z\\\",\\\"updated_at\\\":\\\"2023-11-29T08:02:01.136158Z\\\"},{\\\"id\\\":\\\"ea9db147-9362-419c-a47b-02e564ab4841\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"31b218ba-737b-4dda-a38e-6b4f9e5db5d2\\\",\\\"pdf_url\\\":\\\"localhost/ea9db147-9362-419c-a47b-02e564ab4841.pdf\\\",\\\"status\\\":\\\"failure\\\",\\\"created_at\\\":\\\"2023-11-29T08:22:02.674432Z\\\",\\\"updated_at\\\":\\\"2023-11-29T09:20:49.884174Z\\\"},{\\\"id\\\":\\\"79e054b1-c141-4fbb-9e57-54205f2ba7d0\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a558550e-b67d-4b10-94b9-c77787601059\\\",\\\"chair_id\\\":\\\"d0ba4ec4-a5d2-4408-8b5b-019c867baceb\\\",\\\"pdf_url\\\":\\\"localhost:4000/79e054b1-c141-4fbb-9e57-54205f2ba7d0.pdf\\\",\\\"status\\\":\\\"success\\\",\\\"created_at\\\":\\\"2023-11-29T09:24:29.022777Z\\\",\\\"updated_at\\\":\\\"2023-11-29T09:24:44.775385Z\\\"},{\\\"id\\\":\\\"65b24bcb-90fd-457a-9283-7546fc791939\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"c69f341a-6049-4f0a-a31e-6324915254d9\\\",\\\"chair_id\\\":\\\"729629f2-e061-4be8-bfdb-0bd5d5b62293\\\",\\\"pdf_url\\\":\\\"localhost:4000/65b24bcb-90fd-457a-9283-7546fc791939.pdf\\\",\\\"status\\\":\\\"failure\\\",\\\"created_at\\\":\\\"2023-11-29T09:29:38.796347Z\\\",\\\"updated_at\\\":\\\"2023-11-29T09:30:13.630561Z\\\"},{\\\"id\\\":\\\"e971a8f7-190a-40b4-bc97-c35278103caa\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a554ea02-99e1-4d2d-8f98-0811d70a4283\\\",\\\"chair_id\\\":\\\"1e32815a-5027-4abe-8aed-54f909d9f040\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T10:30:48.955319Z\\\",\\\"updated_at\\\":\\\"2023-11-29T10:30:48.955319Z\\\"},{\\\"id\\\":\\\"9c9cc2ee-5fc7-407f-8996-7190ccea8895\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a554ea02-99e1-4d2d-8f98-0811d70a4283\\\",\\\"chair_id\\\":\\\"1e32815a-5027-4abe-8aed-54f909d9f040\\\",\\\"pdf_url\\\":\\\"localhost:4000/failure-navail.pdf\\\",\\\"status\\\":\\\"failure\\\",\\\"created_at\\\":\\\"2023-11-29T10:30:57.663002Z\\\",\\\"updated_at\\\":\\\"2023-11-29T10:30:57.663002Z\\\"},{\\\"id\\\":\\\"9f477ce3-a1c2-4dff-9182-6962677da22a\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a554ea02-99e1-4d2d-8f98-0811d70a4283\\\",\\\"chair_id\\\":\\\"1e32815a-5027-4abe-8aed-54f909d9f040\\\",\\\"pdf_url\\\":\\\"localhost:4000/failure-navail.pdf\\\",\\\"status\\\":\\\"failure\\\",\\\"created_at\\\":\\\"2023-11-29T10:31:43.423057Z\\\",\\\"updated_at\\\":\\\"2023-11-29T10:31:43.423057Z\\\"},{\\\"id\\\":\\\"3ce24e19-aeda-42db-b7ad-35eeda7b3179\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a554ea02-99e1-4d2d-8f98-0811d70a4233\\\",\\\"chair_id\\\":\\\"1e32815a-5027-4abe-8aed-54f909d9f040\\\",\\\"pdf_url\\\":\\\"localhost:4000/failure-navail.pdf\\\",\\\"status\\\":\\\"failure\\\",\\\"created_at\\\":\\\"2023-11-29T10:31:52.604066Z\\\",\\\"updated_at\\\":\\\"2023-11-29T10:31:52.604066Z\\\"},{\\\"id\\\":\\\"628ebf4e-9dc0-4a80-94a5-8a7fb3d7765a\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a554ea02-99e1-4d2d-8f98-0811d70a4133\\\",\\\"chair_id\\\":\\\"1e32815a-5027-4abe-8aed-54f909d9f040\\\",\\\"pdf_url\\\":\\\"localhost:4000/failure.pdf\\\",\\\"status\\\":\\\"failure\\\",\\\"created_at\\\":\\\"2023-11-29T10:31:55.979885Z\\\",\\\"updated_at\\\":\\\"2023-11-29T10:31:55.979885Z\\\"},{\\\"id\\\":\\\"352bcec9-1b6d-43c9-bbeb-32799c8068ec\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a554ea02-99e1-4d2d-8f98-0811d70a4133\\\",\\\"chair_id\\\":\\\"7fc8f59b-82db-4abc-9ded-6c6d2e024d6a\\\",\\\"pdf_url\\\":\\\"localhost:4000/failure-error.pdf\\\",\\\"status\\\":\\\"failure\\\",\\\"created_at\\\":\\\"2023-11-29T10:53:18.037759Z\\\",\\\"updated_at\\\":\\\"2023-11-29T10:53:18.037759Z\\\"},{\\\"id\\\":\\\"b86b1bc1-359d-4b2a-8041-ee4af3c98588\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a554ea02-99e1-4d2d-8f98-0811d70a4133\\\",\\\"chair_id\\\":\\\"4ae62fec-c401-4817-bd93-afefc773f70a\\\",\\\"pdf_url\\\":\\\"localhost:4000/failure-error.pdf\\\",\\\"status\\\":\\\"failure\\\",\\\"created_at\\\":\\\"2023-11-29T10:53:41.067621Z\\\",\\\"updated_at\\\":\\\"2023-11-29T10:53:41.067621Z\\\"},{\\\"id\\\":\\\"199cd4a4-1829-4b91-84ca-cca28d61adf3\\\",\\\"user_id\\\":\\\"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\\\",\\\"event_id\\\":\\\"a554ea02-99e1-4d2d-8f98-0811d70a4283\\\",\\\"chair_id\\\":\\\"4ae62fec-c401-4817-bd93-afefc773f70a\\\",\\\"pdf_url\\\":null,\\\"status\\\":\\\"processing\\\",\\\"created_at\\\":\\\"2023-11-29T10:54:07.522739Z\\\",\\\"updated_at\\\":\\\"2023-11-29T10:54:07.522739Z\\\"}]\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Booking Update Status",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"success\",\r\n    \"pdf_url\": \"https://google.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/bookings/d4f89fbe-a557-4e35-a0ba-967c6987ea1f",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bookings",
+						"d4f89fbe-a557-4e35-a0ba-967c6987ea1f"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Booking Update Status",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"success\",\r\n    \"pdf_url\": \"https://google.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/bookings/d4f89fbe-a557-4e35-a0ba-967c6987ea1f",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"bookings",
+								"d4f89fbe-a557-4e35-a0ba-967c6987ea1f"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:54:45 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "41"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"User Updated\"\n}"
+				}
+			]
+		}
+	]
+}
