@@ -6,16 +6,33 @@ import (
 	"clientapp/types"
 	"encoding/json"
 	"fmt"
-	"io"
+	// "github.com/emicklei/pgtalk"
+	// "io"
+	// "github.com/google/uuid"
 	"net/http"
 	"os"
-
+	"time"
+	"encoding/hex"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // {event_id: "", chair_id: ""}
+
+type BookingResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+	Status  string `json:"status"`
+	BookingID string `json:"bookings_id"`
+	EventID string `json:"bookings_event_id"`
+	SeatID string `json:"bookings_seat_id"`
+	PaymentURL string `json:"payment_url"`
+	InvoiceID string `json:"invoice_id"`
+}
+
+
 func CreateBooking(c *fiber.Ctx) error {
+	fmt.Println("CreateBooking")
 	if err := types.Enforce(c); err != nil {
 		return err
 	}
@@ -40,11 +57,6 @@ func CreateBooking(c *fiber.Ctx) error {
 		return err
 	}
 
-	var retVal database.Booking
-	if retVal, err = types.DbInstance.Queries.CreateBooking(types.DbInstance.Ctx, *booking); err != nil {
-		return err
-	}
-
 	agent_body := struct {
 		EventId         string `json:"event_id"`
 		SeatId          string `json:"seat_id"`
@@ -52,11 +64,11 @@ func CreateBooking(c *fiber.Ctx) error {
 		BookingsCreated string `json:"bookings_created"`
 		BookingsUpdated string `json:"bookings_updated"`
 	}{
-		EventId:         fmt.Sprintf("%x-%x-%x-%x-%x", retVal.ID.Bytes[0:4], retVal.ID.Bytes[4:6], retVal.ID.Bytes[6:8], retVal.ID.Bytes[8:10], retVal.ID.Bytes[10:16]),
-		SeatId:          fmt.Sprintf("%x-%x-%x-%x-%x", retVal.ChairID.Bytes[0:4], retVal.ChairID.Bytes[4:6], retVal.ChairID.Bytes[6:8], retVal.ChairID.Bytes[8:10], retVal.ChairID.Bytes[10:16]),
-		UserId:          fmt.Sprintf("%x-%x-%x-%x-%x", retVal.UserID.Bytes[0:4], retVal.UserID.Bytes[4:6], retVal.UserID.Bytes[6:8], retVal.UserID.Bytes[8:10], retVal.UserID.Bytes[10:16]),
-		BookingsCreated: retVal.CreatedAt.Time.Format("2006-01-02"),
-		BookingsUpdated: retVal.UpdatedAt.Time.Format("2006-01-02"),
+		EventId:         fmt.Sprintf("%x-%x-%x-%x-%x", booking.EventID.Bytes[0:4], booking.EventID.Bytes[4:6], booking.EventID.Bytes[6:8], booking.EventID.Bytes[8:10], booking.EventID.Bytes[10:16]),
+		SeatId:          fmt.Sprintf("%x-%x-%x-%x-%x", booking.ChairID.Bytes[0:4], booking.ChairID.Bytes[4:6], booking.ChairID.Bytes[6:8], booking.ChairID.Bytes[8:10], booking.ChairID.Bytes[10:16]),
+		UserId:          fmt.Sprintf("%x-%x-%x-%x-%x", booking.UserID.Bytes[0:4], booking.UserID.Bytes[4:6], booking.UserID.Bytes[6:8], booking.UserID.Bytes[8:10], booking.UserID.Bytes[10:16]),
+		BookingsCreated: time.Now().Format("2006-01-02 15:04:05"),
+		BookingsUpdated: time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	var agent_body_string []byte
@@ -68,22 +80,51 @@ func CreateBooking(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	var bookingResp BookingResponse
+
+	err = json.NewDecoder(res.Body).Decode(&bookingResp)
+	if err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return err
+	}
+
 	defer res.Body.Close()
+
 	if res.StatusCode != 200 && res.StatusCode != 201 {
 		return &fiber.Error{
 			Code:    fiber.StatusInternalServerError,
-			Message: "Internal call error",
+			Message: bookingResp.Message,
 		}
 	}
 
-	body, err := io.ReadAll(res.Body)
+	pgTypeUUID := pgtype.UUID{}
+	pgTypeUUID.Scan(bookingResp.BookingID)
+	booking.ID = pgTypeUUID
+
+
+	var retVal database.Booking
+	if retVal,err = types.DbInstance.Queries.CreateBooking(types.DbInstance.Ctx, *booking); err != nil {
+		return err
+	}
+	// print retval
+
+
+	// _m, err := io.ReadAll(res.Body)
+	// if err != nil {
+	// 	return err
+	// }
+
+	dataJSON, err := json.Marshal(bookingResp)
 	if err != nil {
 		return err
 	}
 
+	// Convert the JSON bytes to a string
+	dataString := string(dataJSON)
+
 	return c.Status(fiber.StatusCreated).JSON(&types.ResponseTemplate{
 		Success: true,
-		Message: string(body),
+		Message: dataString,
 	})
 }
 

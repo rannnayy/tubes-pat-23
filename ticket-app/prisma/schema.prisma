@@ -33,7 +33,8 @@ model Bookings {
   bookings_buyer    String
   bookings_event_id String
   bookings_seat_id  String   @unique
-  payment_url       String
+  payment_url       String?
+  invoice_id        String?
   bookings_event    Event    @relation(fields: [bookings_event_id], references: [event_id])
   bookings_seat     Seat     @relation(fields: [bookings_seat_id], references: [seat_id])
 }

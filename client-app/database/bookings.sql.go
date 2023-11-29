@@ -13,21 +13,22 @@ import (
 
 const createBooking = `-- name: CreateBooking :one
 INSERT INTO bookings (
-  user_id, event_id, chair_id
+  id, user_id, event_id, chair_id
 ) VALUES (
-  $1, $2, $3
+  $1, $2, $3, $4
 )
 RETURNING id, user_id, event_id, chair_id, pdf_url, status, created_at, updated_at
 `
 
 type CreateBookingParams struct {
+	ID pgtype.UUID `db:"id" json:"id" validate:"required"`
 	UserID  pgtype.UUID `db:"user_id" json:"user_id" validate:"required"`
 	EventID pgtype.UUID `db:"event_id" json:"event_id" validate:"required"`
 	ChairID pgtype.UUID `db:"chair_id" json:"chair_id" validate:"required"`
 }
 
 func (q *Queries) CreateBooking(ctx context.Context, arg CreateBookingParams) (Booking, error) {
-	row := q.db.QueryRow(ctx, createBooking, arg.UserID, arg.EventID, arg.ChairID)
+	row := q.db.QueryRow(ctx, createBooking, arg.ID, arg.UserID, arg.EventID, arg.ChairID)
 	var i Booking
 	err := row.Scan(
 		&i.ID,
