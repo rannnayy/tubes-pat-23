@@ -69,7 +69,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"dimass\",\r\n    \"password\": \"dimass\"\r\n}",
+					"raw": "{\r\n    \"username\": \"f\",\r\n    \"password\": \"f\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -146,7 +146,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"dimas\",\r\n    \"password\": \"dimas\"\r\n}",
+					"raw": "{\r\n    \"username\": \"f\",\r\n    \"password\": \"f\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -363,7 +363,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4283\", \r\n    \"chair_id\": \"4ae62fec-c401-4817-bd93-afefc773f70a\"\r\n}",
+					"raw": "{\r\n    \"event_id\": \"83cab0d0-04e9-45f6-8935-c5fd336fcede\", \r\n    \"chair_id\": \"4ff396e8-c9e4-49e6-b1f1-57d6b654d8da\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -615,6 +615,35 @@
 					"body": "{\n    \"success\": true,\n    \"message\": \"User Updated\"\n}"
 				}
 			]
+		},
+		{
+			"name": "Booking Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/bookings/43c0047d-748e-4e1f-8519-02158bb59ab9",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bookings",
+						"43c0047d-748e-4e1f-8519-02158bb59ab9"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
