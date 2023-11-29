@@ -383,6 +383,7 @@ app.post("/api/booking", async (req, res) => {
         console.log(
             'Booking failed, in simulation! Sorry for the inconvenience'
         )
+        generateQR("failure", "Holding seat simulation failed!");
         res.status(500).json({ "success": false, "message": "Booking failed, please try again!", "pdf_url": "localhost:4000/failure.pdf" });
     } else {
         try {
@@ -461,16 +462,19 @@ app.post("/api/booking", async (req, res) => {
                 console.log("Delivered the response!");
 
             } else {
+                generateQR("failure-navail", "Seat not available!!");
                 let error_message = "SeatNotAvailable";
                 console.log(error_message)
                 res.status(500).json({
                     'success': false,
                     'message': error_message,
                     'status': 'false',
+                    'pdf_url': 'localhost:4000/failure-navail.pdf'
                 })
             }
         } catch (error) {
             console.log(error)
+            generateQR("failure-error", "Request doesnt satisfy constraints!!");
             if (error.code === 'P2002') {
                 let error_message = "UniqueConstraintViolationEventFullyBookedOrSeatTaken";
                 console.log(error_message);
@@ -478,7 +482,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
-                    'pdf_url': 'localhost:4000/failure.pdf'
+                    'pdf_url': 'localhost:4000/failure-error.pdf'
                 })
             } else if (error.code === "P2003") {
                 let error_message = "ForeignKeyConstraintViolationEventOrSeatNotFound";
@@ -486,7 +490,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
-                    'pdf_url': 'localhost:4000/failure.pdf'
+                    'pdf_url': 'localhost:4000/failure-error.pdf'
                 })
             } else {
                 let error_message = 'InternalServerError'
@@ -495,7 +499,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
-                    'pdf_url': 'localhost:4000/failure.pdf'
+                    'pdf_url': 'localhost:4000/failure-error.pdf'
                 });
             }
         }
