@@ -185,6 +185,22 @@ func UpdateBookingStatus(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusAccepted).JSON(&types.ResponseTemplate{
 		Success: true,
-		Message: "User Updated",
+		Message: "Booking Updated",
+	})
+}
+
+func DeleteBooking(c *fiber.Ctx) error {
+	var bookingId pgtype.UUID
+	if err := bookingId.Scan(c.Params("id")); err != nil {
+		return err
+	}
+
+	if err := types.DbInstance.Queries.DeleteBooking(types.DbInstance.Ctx, bookingId); err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusAccepted).JSON(&types.ResponseTemplate{
+		Success: true,
+		Message: "Booking Deleted",
 	})
 }

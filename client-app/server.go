@@ -60,7 +60,7 @@ func main() {
 	bookings.Post("/", handlers.CreateBooking)           // {event_id: "", chair_id: ""}
 	bookings.Get("/", handlers.GetAllBooking)            //
 	bookings.Patch("/:id", handlers.UpdateBookingStatus) // {status: "", pdf_url: ""}
-
+	bookings.Delete("/:id", handlers.DeleteBooking)      //
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
