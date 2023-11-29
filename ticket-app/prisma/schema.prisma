@@ -44,3 +44,12 @@ enum StatusEnum {
   ONGOING
   BOOKED
 }
+
+model Queues {
+  bookings_created    DateTime    
+  bookings_updated    DateTime
+  bookings_buyer      String
+  bookings_event_id   String
+  bookings_seat_id    String      @id
+  bookings_timestamp  DateTime    @default(now())
+}

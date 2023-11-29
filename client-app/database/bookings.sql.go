@@ -11,7 +11,46 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createBooking = `-- name: CreateBooking :one
+const createBookingFailed = `-- name: CreateBookingFailed :one
+INSERT INTO bookings (
+  user_id, event_id, chair_id, status, pdf_url
+) VALUES (
+  $1, $2, $3, $4, $5
+)
+RETURNING id, user_id, event_id, chair_id, pdf_url, status, created_at, updated_at
+`
+
+type CreateBookingFailedParams struct {
+	UserID  pgtype.UUID   `db:"user_id" json:"user_id" validate:"required"`
+	EventID pgtype.UUID   `db:"event_id" json:"event_id" validate:"required"`
+	ChairID pgtype.UUID   `db:"chair_id" json:"chair_id" validate:"required"`
+	Status  BookingStatus `db:"status" json:"status" validate:"required,bookingstatus_custom_validation"`
+	PdfUrl  pgtype.Text   `db:"pdf_url" json:"pdf_url"`
+}
+
+func (q *Queries) CreateBookingFailed(ctx context.Context, arg CreateBookingFailedParams) (Booking, error) {
+	row := q.db.QueryRow(ctx, createBookingFailed,
+		arg.UserID,
+		arg.EventID,
+		arg.ChairID,
+		arg.Status,
+		arg.PdfUrl,
+	)
+	var i Booking
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.EventID,
+		&i.ChairID,
+		&i.PdfUrl,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const createBookingId = `-- name: CreateBookingId :one
 INSERT INTO bookings (
   id, user_id, event_id, chair_id
 ) VALUES (
@@ -20,15 +59,20 @@ INSERT INTO bookings (
 RETURNING id, user_id, event_id, chair_id, pdf_url, status, created_at, updated_at
 `
 
-type CreateBookingParams struct {
-	ID pgtype.UUID `db:"id" json:"id" validate:"required"`
+type CreateBookingIdParams struct {
+	ID      pgtype.UUID `db:"id" json:"id"`
 	UserID  pgtype.UUID `db:"user_id" json:"user_id" validate:"required"`
 	EventID pgtype.UUID `db:"event_id" json:"event_id" validate:"required"`
 	ChairID pgtype.UUID `db:"chair_id" json:"chair_id" validate:"required"`
 }
 
-func (q *Queries) CreateBooking(ctx context.Context, arg CreateBookingParams) (Booking, error) {
-	row := q.db.QueryRow(ctx, createBooking, arg.ID, arg.UserID, arg.EventID, arg.ChairID)
+func (q *Queries) CreateBookingId(ctx context.Context, arg CreateBookingIdParams) (Booking, error) {
+	row := q.db.QueryRow(ctx, createBookingId,
+		arg.ID,
+		arg.UserID,
+		arg.EventID,
+		arg.ChairID,
+	)
 	var i Booking
 	err := row.Scan(
 		&i.ID,

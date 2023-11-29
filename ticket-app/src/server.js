@@ -9,12 +9,17 @@ const QRCode = require('qrcode');
 const fs = require('fs');
 const { PDFDocument, rgb } = require('pdf-lib');
 const url = require('url');
+const path = require('path');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
 
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
+
 const port = 4000;
+console.log(publicPath);
 
 var payment_endpoint = 'http://payment:5000';
 var client_endpoint = 'http://clientapp:3000';
@@ -26,42 +31,6 @@ async function processQueueMessage(msg) {
 }
 rabbitMQ.setConsumer(queueName, processQueueMessage);
 rabbitMQ.createChannel();
-
-// ActiveMQ
-var stompit = require('stompit');
-var destination = '/queue/seats';
-
-var servers = [
-    { 
-        host: 'activemq',
-        port: 61613,
-        connectHeaders:{
-            'host': 'localhost',
-            'login': 'admin',
-            'passcode': 'admin',
-        }
-    }
-];
-
-var connections = new stompit.ConnectFailover(servers);
-
-connections.on('connecting', function(connector) {
-    var address = connector.serverProperties.remoteAddress.transportPath;
-    
-    console.log('Connecting to ' + address);
-});
-
-connections.on('error', function(error) {
-
-    var connectArgs = error.connectArgs;
-    var address = connectArgs.host + ':' + connectArgs.port;
-    
-    console.log('Connection error to ' + address + ': ' + error.message);
-});
-
-var channelFactory = new stompit.ChannelFactory(connections);
-
-// 
 
 async function generateQRCodeDataUrl(data) {
     return new Promise((resolve, reject) => {
@@ -92,7 +61,7 @@ async function generateQR(urlToEncode, failureReason) {
     const pdfBytes = await pdfDoc.save();
 
     // Specify the output directory
-    const outputDir = '../public/output';
+    const outputDir = './src/public';
 
     // Create the output directory if it doesn't exist
     await fs.promises.mkdir(outputDir, { recursive: true });
@@ -160,7 +129,10 @@ async function processQueueMessage(msg) {
     }
     let response = await fetch(client_endpoint + `/api/bookings/${bookingId}`, {
         method: 'PATCH',
-        body: JSON.stringify(output),
+        body: JSON.stringify({
+            status: status === "success" ? "success" : "failure",
+            pdf_url: ('localhost:4000/' + bookingId.toString() + '.pdf'),
+        }),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         }
@@ -416,7 +388,8 @@ app.post("/api/booking", async (req, res) => {
         console.log(
             'Booking failed, in simulation! Sorry for the inconvenience'
         )
-        res.status(500).json({ "success": false, "message": "Booking failed, please try again!", "pdf_url": "localhost/failure.pdf" });
+        generateQR("failure", "Holding seat simulation failed!");
+        res.status(500).json({ "success": false, "message": "Booking hold failed in simulation!, please try again!", "pdf_url": "localhost:4000/failure.pdf" });
     } else {
         try {
             console.log(req.body);
@@ -493,38 +466,20 @@ app.post("/api/booking", async (req, res) => {
                 })
                 console.log("Delivered the response!");
 
-            } else if (seat.seat_status === "ONGOING") {
+            } else if (seat.seat_status === "ONGOING" || seat.seat_status === "BOOKED") {
                 console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                 // Queue this seat for this person
-                let seatToEnqueue = {
-                    bookings_created: new Date(bookings_created),
-                    bookings_updated: new Date(bookings_updated),
-                    bookings_buyer: user_id,
-                    bookings_event_id: event_id,
-                    bookings_seat_id: seat_id,
-                }
-
-                // Put into ActiveMQ
-                var headers = {
-                    destination: destination,
-                    'selector': `bookings_seat_id = '${seat_id}'`,
-                    'activemq.prefetchSize': 1
-                };
-                channelFactory.channel(function(error, channel) {
-  
-                    if (error) {
-                        console.log('channel factory error: ' + error.message);
-                        return;
+                // Put into Queues DB
+                const que = await prisma.queues.create({
+                    data: {
+                        bookings_created: new Date(bookings_created),
+                        bookings_updated: new Date(bookings_updated),
+                        bookings_buyer: user_id,
+                        bookings_event_id: event_id,
+                        bookings_seat_id: seat_id,
+                        bookings_timestamp: new Date()
                     }
-                    channel.send(headers, JSON.stringify(seatToEnqueue), function(error){
-                        if (error) {
-                            console.log('send error: ' + error.message);
-                            return;
-                        } else {
-                            console.log(`Enqueued left customer on queue for seat ${seat_id}`);
-                        }
-                    })
-                });
+                })
             
                 res.status(200).json({
                     'success': false,
@@ -532,16 +487,19 @@ app.post("/api/booking", async (req, res) => {
                     'status': 'false'
                 })
             } else {
+                generateQR("failure-navail", "Seat not available!!");
                 let error_message = "SeatNotAvailable";
                 console.log(error_message)
                 res.status(500).json({
                     'success': false,
                     'message': error_message,
                     'status': 'false',
+                    'pdf_url': 'localhost:4000/failure-navail.pdf'
                 })
             }
         } catch (error) {
             console.log(error)
+            generateQR("failure-error", "Request doesnt satisfy constraints!!");
             if (error.code === 'P2002') {
                 let error_message = "UniqueConstraintViolationEventFullyBookedOrSeatTaken";
                 console.log(error_message);
@@ -549,7 +507,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
-                    'pdf_url': 'localhost/failure.pdf'
+                    'pdf_url': 'localhost:4000/failure-error.pdf'
                 })
             } else if (error.code === "P2003") {
                 let error_message = "ForeignKeyConstraintViolationEventOrSeatNotFound";
@@ -557,7 +515,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
-                    'pdf_url': 'localhost/failure.pdf'
+                    'pdf_url': 'localhost:4000/failure-error.pdf'
                 })
             } else {
                 let error_message = 'InternalServerError'
@@ -566,7 +524,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
-                    'pdf_url': 'localhost/failure.pdf'
+                    'pdf_url': 'localhost:4000/failure-error.pdf'
                 });
             }
         }
@@ -635,7 +593,7 @@ app.get("/api/bookings/:bookings_id", async (req, res) => {
     }
 })
 
-app.delete("/api/booking/:booking_id", async (req, res) => {
+app.delete("/api/booking/booking_id/:booking_id", async (req, res) => {
     try {
         let booking_id = req.params.booking_id
         const booking = await prisma.bookings.findFirstOrThrow({
@@ -644,108 +602,56 @@ app.delete("/api/booking/:booking_id", async (req, res) => {
                 bookings_seat: true
             },
         })
-        
+        console.log("1");
+        console.log(booking);
+
         // This seat is going to be all dequeued, get the first the make booking
-        const seat_id = booking.bookings_seat.seat_id
+        const seat_id = await booking.bookings_seat.seat_id
+        console.log(seat_id)
+        console.log("2");
 
-        await prisma.bookings.delete({
-            where: { bookings_id: booking_id, }
+        // Consume in Queue DB
+        console.log('SENDING');
+
+        const requestor = await prisma.queues.findMany({
+            orderBy: {
+                bookings_timestamp: 'asc'
+            },
+            take: 1
         })
 
-        // Consume in ActiveMQ
-        let requestors = [];
-        
-        var headers = {
-            destination: destination,
-            'selector': `bookings_seat_id = '${seat_id}'`,
-            'activemq.prefetchSize': 1
-        };
-    
-        channelFactory.channel(function(error, channel) {
-    
-            if (error) {
-                console.log('channel factory error: ' + error.message);
-                return;
-            }
-            
-            channel.subscribe(headers, function(error, message, subscription){
-                if (error) {
-                    console.log('subscribe error: ' + error.message);
-                    return;
-                }
+        console.log("REQUESTOR");
+        console.log(requestor);
 
-                message.readString('utf8', function(error, string) {
-                    if (error) {
-                        console.log('read message error: ' + error.message);
-                        return;
-                    }
-                    requestors.push(JSON.parse(string));
-                    console.log(JSON.parse(string))
-                });
-        
-                message.on('end', function(){
-                    console.log("DONE SEARCHING");
-                });
-            });
-        });
-        let requestor = requestors.shift();
-        requestors.shift();
-
-        // Enqueue the 2nd to last
-        channelFactory.channel(function(error, channel) {
-  
-            if (error) {
-                console.log('channel factory error: ' + error.message);
-                return;
-            }
-            requestors.map(reqs => {
-                var seatToEnqueue = JSON.stringify({
-                    bookings_created: reqs.bookings_created,
-                    bookings_updated: reqs.bookings_updated,
-                    bookings_buyer: reqs.bookings_buyer,
-                    bookings_event_id: reqs.bookings_event_id,
-                    bookings_seat_id: reqs.bookings_seat_id,
-                });
-
-                channel.send(headers, seatToEnqueue, function(error){
-                    if (error) {
-                        console.log('send error: ' + error.message);
-                        return;
-                    } else {
-                        console.log(`Enqueued left customer on queue for seat ${seat_id}`);
-                    }
-                })
-            })
-        })
-        
         // Already gotten the first only, make a booking for it
-        const newBooking = await prisma.bookings.create({
+        const newBooking = await prisma.bookings.update({
+            where: {
+                bookings_id: booking_id
+            },
             data: {
                 bookings_created: requestor.bookings_created,
                 bookings_updated: requestor.bookings_updated,
                 bookings_buyer: requestor.bookings_buyer,
                 bookings_event_id: requestor.bookings_event_id,
                 bookings_seat_id: requestor.bookings_seat_id,
-                payment_url: ""
+                payment_url: "",
+                bookings_seat: {
+                    update: {
+                        seat_id: seat_id,
+                        seat_status: "ONGOING"
+                    }
+                }
             }
         })
-        booking_id = newBooking.bookings_id;
-        console.log(booking_id);
-
-        const seat = await prisma.seat.update({
-            where: {
-                seat_id: seat_id,
-            },
-            data: {
-                seat_status: "ONGOING",
-            }
-        })
+        console.log("BOOKING");
+        console.log(newBooking);
 
         console.log(payment_endpoint + '/invoice');
         console.log({
             amount: 100,
             bookingId: booking_id
         });
+        console.log("5");
 
         let response = await fetch(payment_endpoint + '/invoice', {
             method: 'POST',
@@ -759,6 +665,7 @@ app.delete("/api/booking/:booking_id", async (req, res) => {
         })
         let responseJson = await response.json()
         console.log(responseJson)
+        console.log("6");
 
         res.status(200).json({
             'status': 'ONGOING',
@@ -768,7 +675,7 @@ app.delete("/api/booking/:booking_id", async (req, res) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "Something went wrong",
+            message: "Something went wrong: "+error,
         })
     }
 })

@@ -4,7 +4,7 @@ const TICKET_WEBHOOK_URL = process.env.TICKET_WEBHOOK_URL || 'http://localhost:4
 
 // Ganti jadi 0.1 nanti
 function simulatePayment() {
-    const isSuccessful = Math.random() > 0.5;
+    const isSuccessful = Math.random() > 0.1;
     return isSuccessful;
 }
 
