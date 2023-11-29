@@ -167,7 +167,7 @@ func GetAllBooking(c *fiber.Ctx) error {
 func UpdateBookingStatus(c *fiber.Ctx) error {
 	param := new(database.UpdateBookingStatusParams)
 
-	if err := param.ID.UnmarshalJSON([]byte(c.Params("id"))); err != nil {
+	if err := param.ID.Scan(c.Params("id")); err != nil {
 		return err
 	}
 

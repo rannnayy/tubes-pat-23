@@ -55,18 +55,6 @@ app.get('/', (req, res) => {
 
 app.listen(port, async () => {
     console.log(`Server running at http://ticketapp:${port}`);
-    // console.log(payment_endpoint + '/invoice');
-    // let response = await fetch(payment_endpoint + '/invoice', {
-    //     method: 'POST',
-    //     body: JSON.stringify({
-    //         amount: 100,
-    //         bookingId: "HMXJFKDL"
-    //     }),
-    //     headers: {
-    //         'Content-type': 'application/json; charset=UTF-8',
-    //     }
-    // })
-    // console.log(response);
 });
 
 async function processQueueMessage(msg) {
@@ -185,11 +173,15 @@ app.post("/api/events", async (req, res) => {
             },
         })
 
-        res.json(newEvent)
+        res.status(200).json({
+            success: true,
+            message: newEvent
+        })
     } catch (error) {
         console.log(error.message)
         res.status(500).json({
-            message: "Internal Server Error",
+            success: false,
+            message: "Internal Server Error"
         })
     }
 })
@@ -200,10 +192,14 @@ app.get("/api/events/:event_id", async (req, res) => {
             where: { event_id: req.params.event_id?.toString() },
             include: { event_bookings: true, event_seat: true },
         })
-        res.json(event)
+        res.status(200).json({
+            success: true,
+            message: event
+        })
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong",
+            success: false,
+            message: "Something went wrong"
         })
     }
 })
@@ -217,10 +213,39 @@ app.get("/api/events/", async (req, res) => {
             },
         })
         console.log(event)
-        res.json(event)
+        res.status(200).json({
+            success: true,
+            message: event
+        })
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong",
+            success: false,
+            message: "Something went wrong"
+        })
+    }
+})
+
+app.get("/api/events/page/:page/pageSize/:pageSize", async (req, res) => {
+    try {
+        const page = parseInt(req.params.page) || 1;
+        const pageSize = parseInt(req.params.pageSize) || 10;
+        const event = await prisma.event.findMany({
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+            include: {
+                event_bookings: true,
+                event_seat: true
+            },
+        })
+        console.log(event)
+        res.status(200).json({
+            success: true,
+            message: event
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong"
         })
     }
 })
@@ -248,10 +273,14 @@ app.put("/api/events/:event_id", async (req, res) => {
         });
         console.log(refreshedEvent)
 
-        res.json(refreshedEvent)
+        res.status(200).json({
+            success: true,
+            message: refreshedEvent
+        })
     } catch (error) {
         console.log(error)
         res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
@@ -263,10 +292,14 @@ app.delete("/api/events/:event_id", async (req, res) => {
         const deletedEvent = await prisma.event.delete({
             where: { event_id, },
         })
-        res.json(deletedEvent)
+        res.status(200).json({
+            success: true,
+            message: deletedEvent
+        })
     } catch (error) {
         console.log(error)
         res.status(500).json({
+            success: true,
             message: "Something went wrong",
         })
     }
@@ -277,9 +310,13 @@ app.get("/api/seats/:seat_id", async (req, res) => {
         const seat = await prisma.seat.findFirstOrThrow({
             where: { seat_id: req.params.seat_id?.toString() },
         })
-        res.json(seat)
+        res.status(200).json({
+            success: true,
+            message: seat
+        })
     } catch (error) {
         res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
@@ -287,12 +324,34 @@ app.get("/api/seats/:seat_id", async (req, res) => {
 
 app.get("/api/seats/", async (req, res) => {
     try {
-        const seat = await prisma.seat.findMany({
-
+        const seat = await prisma.seat.findMany({})
+        res.status(200).json({
+            success: true,
+            message: seat
         })
-        res.json(seat)
     } catch (error) {
         res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+        })
+    }
+})
+
+app.get("/api/seats/page/:page/pageSize/:pageSize", async (req, res) => {
+    try {
+        const page = parseInt(req.params.page) || 1;
+        const pageSize = parseInt(req.params.pageSize) || 10;
+        const seats = await prisma.seat.findMany({
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+        });
+        res.status(200).json({
+            success: true,
+            message: seats
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
@@ -425,9 +484,33 @@ app.post("/api/booking", async (req, res) => {
 app.get("/api/bookings/", async (req, res) => {
     try {
         const bookings = await prisma.bookings.findMany()
-        res.json(bookings)
+        res.status(200).json({
+            success: true,
+            message: bookings
+        })
     } catch (error) {
         res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+        })
+    }
+})
+
+app.get("/api/bookings/page/:page/pageSize/:pageSize", async (req, res) => {
+    try {
+        const page = parseInt(req.params.page) || 1;
+        const pageSize = parseInt(req.params.pageSize) || 10;
+        const bookings = await prisma.bookings.findMany({
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+        })
+        res.status(200).json({
+            success: true,
+            message: bookings
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
@@ -447,9 +530,13 @@ app.get("/api/bookings/:bookings_id", async (req, res) => {
             },
         })
 
-        res.json(bookings)
+        res.status(200).json({
+            success: true,
+            message: bookings
+        })
     } catch (error) {
         res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
