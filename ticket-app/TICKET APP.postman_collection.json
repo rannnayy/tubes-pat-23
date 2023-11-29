@@ -1,0 +1,972 @@
+{
+	"info": {
+		"_postman_id": "7d280504-c44a-4eec-a521-52cb1b6075e1",
+		"name": "TICKET APP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31387940",
+		"_collection_link": "https://blue-resonance-231811.postman.co/workspace/349940a7-e510-4d54-8b9c-e6266107ef7f/collection/31387940-7d280504-c44a-4eec-a521-52cb1b6075e1?action=share&source=collection_link&creator=31387940"
+	},
+	"item": [
+		{
+			"name": "Hi, world!",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000",
+					"host": [
+						"localhost"
+					],
+					"port": "4000"
+				}
+			},
+			"response": [
+				{
+					"name": "localhost:6000",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:6000",
+							"host": [
+								"localhost"
+							],
+							"port": "6000"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "html",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/html; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "13"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"d-CgqfKmdylCVXq1NV12r0Qvj2XgE\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 18:18:26 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "Hello, World!"
+				}
+			]
+		},
+		{
+			"name": "POST EVENTS",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"event_name\": \"Hallo Bandung\",\n  \"event_date\": \"11/29/2023 12:34:56\",\n  \"event_desc\": \"Mari merayakan hari kita pulang dari bandung\",\n  \"event_num_seat\": 15\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/api/events",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"events"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "POST EVENTS",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_name\": \"Hallo Bandung\",\n  \"event_date\": \"11/29/2023 12:34:56\",\n  \"event_desc\": \"Mari merayakan hari kita pulang dari bandung\",\n  \"event_num_seat\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:6000/api/events",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"api",
+								"events"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "2140"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"85c-6VzzmZY+RxA7HXx1IPYTUnLlNhc\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 18:22:31 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\",\n    \"event_name\": \"Hallo Bandung\",\n    \"event_date\": \"2023-11-29T12:34:56.000Z\",\n    \"event_desc\": \"Mari merayakan hari kita pulang dari bandung\",\n    \"event_num_seat\": 15,\n    \"event_bookings\": [],\n    \"event_seat\": [\n        {\n            \"seat_id\": \"c6673c5f-cdac-42c7-a24d-1f2be08534a0\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"c386e4bf-1718-4cc7-a53b-fca7bcfced5c\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"8249dbb0-c1fd-43b0-a6f8-c3477d781f77\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"1a21524e-2db0-4738-9677-9bc328bdcb34\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"944d5c01-1c4c-4d31-b8c6-a866e09184ef\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"c0db4c16-bdf1-40a5-b7ff-e3b9e3165524\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"8414661e-a969-4130-885e-c156401e18d4\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"a291202a-b6c7-470f-bb08-5dc843b93249\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"81745e30-fea6-43d5-942c-b65c983737be\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"29a20ac8-793f-4099-a350-61b9dc004276\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"14a4e971-c5b5-45fe-bce3-4c5af518e46e\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"d4ba1c96-264d-49a1-a68b-a6a5d0314427\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"9f45d285-c485-43ea-80dc-5dad5fbfe14a\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"3de4b18d-79dc-497a-813f-f7161bb096e0\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        },\n        {\n            \"seat_id\": \"bf6d50cf-7296-4cd9-a59d-4ffe5c3df6df\",\n            \"seat_status\": \"OPEN\",\n            \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "GET SPECIFIC EVENT",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/api/events/9c14c6d3-6e26-4457-9b9d-310f89d788fd",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"events",
+						"9c14c6d3-6e26-4457-9b9d-310f89d788fd"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET SPECIFIC EVENT",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:6000/api/events/event_id/9c14c6d3-6e26-4457-9b9d-310f89d788fd",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"api",
+								"events",
+								"event_id",
+								"9c14c6d3-6e26-4457-9b9d-310f89d788fd"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "200"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"c8-LhTC0p/hj/yYnRKOWoyXQSWDhgI\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 18:24:24 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\",\n    \"event_name\": \"Hallo Bandung\",\n    \"event_date\": \"2023-11-29T12:34:56.000Z\",\n    \"event_desc\": \"Mari merayakan hari kita pulang dari bandung\",\n    \"event_num_seat\": 15\n}"
+				}
+			]
+		},
+		{
+			"name": "GET EVENTS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/api/events",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"events"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET EVENTS",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:6000/api/events",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"api",
+								"events"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "2142"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"85e-CFW9d+nzyKZXzMZ8g0fdXfc765U\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 18:25:06 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\",\n        \"event_name\": \"Hallo Bandung\",\n        \"event_date\": \"2023-11-29T12:34:56.000Z\",\n        \"event_desc\": \"Mari merayakan hari kita pulang dari bandung\",\n        \"event_num_seat\": 15,\n        \"event_bookings\": [],\n        \"event_seat\": [\n            {\n                \"seat_id\": \"c6673c5f-cdac-42c7-a24d-1f2be08534a0\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"c386e4bf-1718-4cc7-a53b-fca7bcfced5c\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"8249dbb0-c1fd-43b0-a6f8-c3477d781f77\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"1a21524e-2db0-4738-9677-9bc328bdcb34\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"944d5c01-1c4c-4d31-b8c6-a866e09184ef\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"c0db4c16-bdf1-40a5-b7ff-e3b9e3165524\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"8414661e-a969-4130-885e-c156401e18d4\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"a291202a-b6c7-470f-bb08-5dc843b93249\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"81745e30-fea6-43d5-942c-b65c983737be\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"29a20ac8-793f-4099-a350-61b9dc004276\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"14a4e971-c5b5-45fe-bce3-4c5af518e46e\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"d4ba1c96-264d-49a1-a68b-a6a5d0314427\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"9f45d285-c485-43ea-80dc-5dad5fbfe14a\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"3de4b18d-79dc-497a-813f-f7161bb096e0\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            },\n            {\n                \"seat_id\": \"bf6d50cf-7296-4cd9-a59d-4ffe5c3df6df\",\n                \"seat_status\": \"OPEN\",\n                \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n            }\n        ]\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "PUT EVENT",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"event_name\": \"Hallo Bandung2\",\n  \"event_date\": \"11/29/2023 13:34:56\",\n  \"event_desc\": \"Mari merayakan hari kita pulang dari bandung hehe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/api/events/9c14c6d3-6e26-4457-9b9d-310f89d788fd",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"events",
+						"9c14c6d3-6e26-4457-9b9d-310f89d788fd"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "PUT EVENT",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_name\": \"Hallo Bandung2\",\n  \"event_date\": \"11/29/2023 13:34:56\",\n  \"event_desc\": \"Mari merayakan hari kita pulang dari bandung hehe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:6000/api/events/event_id/9c14c6d3-6e26-4457-9b9d-310f89d788fd",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"api",
+								"events",
+								"event_id",
+								"9c14c6d3-6e26-4457-9b9d-310f89d788fd"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "206"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"ce-82RI+Yh6nvaV4ALjaYgHvn91VkA\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 18:40:56 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\",\n    \"event_name\": \"Hallo Bandung2\",\n    \"event_date\": \"2023-11-29T13:34:56.000Z\",\n    \"event_desc\": \"Mari merayakan hari kita pulang dari bandung hehe\",\n    \"event_num_seat\": 15\n}"
+				}
+			]
+		},
+		{
+			"name": "GET ALL SEATS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/seats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"seats"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET ALL SEATS",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6000/api/seats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"api",
+								"seats"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "1906"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"772-/o9VzWxiRfTjms1R6E6lidd4R7M\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 18:42:17 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"seat_id\": \"c6673c5f-cdac-42c7-a24d-1f2be08534a0\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"c386e4bf-1718-4cc7-a53b-fca7bcfced5c\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"8249dbb0-c1fd-43b0-a6f8-c3477d781f77\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"1a21524e-2db0-4738-9677-9bc328bdcb34\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"944d5c01-1c4c-4d31-b8c6-a866e09184ef\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"c0db4c16-bdf1-40a5-b7ff-e3b9e3165524\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"8414661e-a969-4130-885e-c156401e18d4\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"a291202a-b6c7-470f-bb08-5dc843b93249\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"81745e30-fea6-43d5-942c-b65c983737be\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"29a20ac8-793f-4099-a350-61b9dc004276\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"14a4e971-c5b5-45fe-bce3-4c5af518e46e\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"d4ba1c96-264d-49a1-a68b-a6a5d0314427\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"9f45d285-c485-43ea-80dc-5dad5fbfe14a\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"3de4b18d-79dc-497a-813f-f7161bb096e0\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    },\n    {\n        \"seat_id\": \"bf6d50cf-7296-4cd9-a59d-4ffe5c3df6df\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "GET SPECIFIC SEAT",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/seats/c6673c5f-cdac-42c7-a24d-1f2be08534a0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"seats",
+						"c6673c5f-cdac-42c7-a24d-1f2be08534a0"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET SPECIFIC SEAT",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6000/api/seats/c6673c5f-cdac-42c7-a24d-1f2be08534a0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"api",
+								"seats",
+								"c6673c5f-cdac-42c7-a24d-1f2be08534a0"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "126"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"7e-9yyDwapBewlmsM439K6+Q6/lhRA\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 18:43:04 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"seat_id\": \"c6673c5f-cdac-42c7-a24d-1f2be08534a0\",\n    \"seat_status\": \"OPEN\",\n    \"seat_event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\"\n}"
+				}
+			]
+		},
+		{
+			"name": "GET BOOKINGS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/api/bookings",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET BOOKINGS",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/api/bookings",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "8426"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"20ea-GeSyCAUuoAB7YbUzFcmLH7HKx8U\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:56:57 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": [\n        {\n            \"bookings_id\": \"5e6f74da-8254-4f9d-8afc-41c1b1ad1643\",\n            \"bookings_created\": \"2023-11-28T21:23:15.726Z\",\n            \"bookings_updated\": \"2023-11-28T21:23:15.726Z\",\n            \"bookings_buyer\": \"ABC\",\n            \"bookings_event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4283\",\n            \"bookings_seat_id\": \"8249dbb0-c1fd-43b0-a6f8-c3477d781f77\",\n            \"payment_url\": \"\",\n            \"invoice_id\": null\n        },\n        {\n            \"bookings_id\": \"5f48165a-9f33-4cc3-9a42-c253b9381e9d\",\n            \"bookings_created\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_updated\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"08a22a08-8376-4c18-9751-4b3fc0223531\",\n            \"payment_url\": \"\",\n            \"invoice_id\": null\n        },\n        {\n            \"bookings_id\": \"7c1ca311-03a3-46ef-a0b9-9ef25350b29d\",\n            \"bookings_created\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_updated\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"c69f341a-6049-4f0a-a31e-6324915254d9\",\n            \"bookings_seat_id\": \"58aefda0-1655-4d1c-89e3-5c8be3cbaba6\",\n            \"payment_url\": \"\",\n            \"invoice_id\": null\n        },\n        {\n            \"bookings_id\": \"c7d4b5d6-09ea-4c58-9d6a-bfe46a866995\",\n            \"bookings_created\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_updated\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"de41dd7a-6318-4788-b48c-488785173785\",\n            \"bookings_seat_id\": \"08eb487b-12b1-49f9-b412-843c1d4efb63\",\n            \"payment_url\": \"\",\n            \"invoice_id\": null\n        },\n        {\n            \"bookings_id\": \"08f8c067-8f07-4f53-990f-cdd2bf49ab12\",\n            \"bookings_created\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_updated\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"9c1087d5-48a3-47aa-a2d7-8ae9a6e21513\",\n            \"payment_url\": \"\",\n            \"invoice_id\": null\n        },\n        {\n            \"bookings_id\": \"4ca3a0c9-dbfe-4e3c-b362-0c0c0e5a6960\",\n            \"bookings_created\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_updated\": \"2023-11-29T00:00:00.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"0c331db2-77fc-4e92-8822-b6b038b9d787\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=1128e136-3055-43b9-be8c-9dc9442be009&bookingId=4ca3a0c9-dbfe-4e3c-b362-0c0c0e5a6960\",\n            \"invoice_id\": \"1128e136-3055-43b9-be8c-9dc9442be009\"\n        },\n        {\n            \"bookings_id\": \"01e7b57e-eb7f-4e36-a401-00323055d1d4\",\n            \"bookings_created\": \"2023-11-29T06:04:34.000Z\",\n            \"bookings_updated\": \"2023-11-29T06:04:34.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"9b3c425e-ab02-4ec3-bbe2-a2b7afcd3d9d\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=ac43e223-7a34-4093-9b13-651e109adc18&bookingId=01e7b57e-eb7f-4e36-a401-00323055d1d4\",\n            \"invoice_id\": \"ac43e223-7a34-4093-9b13-651e109adc18\"\n        },\n        {\n            \"bookings_id\": \"014c4dee-49e5-478b-9823-fc079872d84b\",\n            \"bookings_created\": \"2023-11-29T06:16:33.000Z\",\n            \"bookings_updated\": \"2023-11-29T06:16:33.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"bb272d8b-3027-4d3b-8951-4c788e94f289\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=71d56cdb-2a32-4eeb-815a-86fc2333bf09&bookingId=014c4dee-49e5-478b-9823-fc079872d84b\",\n            \"invoice_id\": \"71d56cdb-2a32-4eeb-815a-86fc2333bf09\"\n        },\n        {\n            \"bookings_id\": \"d0481eb2-e9ce-4415-8ace-cf54410c0119\",\n            \"bookings_created\": \"2023-11-29T06:18:27.000Z\",\n            \"bookings_updated\": \"2023-11-29T06:18:27.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"ca166122-f23d-4364-ac46-8778970d5142\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=b29fbe12-57e2-41d6-a484-b50d0a1c53af&bookingId=d0481eb2-e9ce-4415-8ace-cf54410c0119\",\n            \"invoice_id\": \"b29fbe12-57e2-41d6-a484-b50d0a1c53af\"\n        },\n        {\n            \"bookings_id\": \"b91a58e4-582f-4a17-9374-d25747aa91b1\",\n            \"bookings_created\": \"2023-11-29T06:21:22.000Z\",\n            \"bookings_updated\": \"2023-11-29T06:21:22.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"4a428ce0-cbd1-428c-9b51-c1acafabc4c9\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=dd1021f7-4621-44e4-9e89-2f9499be51c7&bookingId=b91a58e4-582f-4a17-9374-d25747aa91b1\",\n            \"invoice_id\": \"dd1021f7-4621-44e4-9e89-2f9499be51c7\"\n        },\n        {\n            \"bookings_id\": \"faa47cfc-7455-4f4d-b8da-7cc3fb8aade6\",\n            \"bookings_created\": \"2023-11-29T06:25:55.000Z\",\n            \"bookings_updated\": \"2023-11-29T06:25:55.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"c022866c-fcea-4825-a78d-ea967ae08e15\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=63f62cb2-c26a-4825-bd8d-817272226ef7&bookingId=faa47cfc-7455-4f4d-b8da-7cc3fb8aade6\",\n            \"invoice_id\": \"63f62cb2-c26a-4825-bd8d-817272226ef7\"\n        },\n        {\n            \"bookings_id\": \"04fae403-0680-4bc1-91ef-16e9499a1b2e\",\n            \"bookings_created\": \"2023-11-29T06:29:15.000Z\",\n            \"bookings_updated\": \"2023-11-29T06:29:15.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"c6652260-add2-4386-90d7-4af77b3c4271\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=cf61eb51-a9cd-440f-b171-29e716971b2b&bookingId=04fae403-0680-4bc1-91ef-16e9499a1b2e\",\n            \"invoice_id\": \"cf61eb51-a9cd-440f-b171-29e716971b2b\"\n        },\n        {\n            \"bookings_id\": \"c317bf7d-c7f5-4db9-95b0-eec3929d1a43\",\n            \"bookings_created\": \"2023-11-29T07:27:07.000Z\",\n            \"bookings_updated\": \"2023-11-29T07:27:07.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"af907a0a-c040-430b-bba0-66e938c8cccb\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=727e5743-b3dc-4381-bd31-a7a1aaf11a6d&bookingId=c317bf7d-c7f5-4db9-95b0-eec3929d1a43\",\n            \"invoice_id\": \"727e5743-b3dc-4381-bd31-a7a1aaf11a6d\"\n        },\n        {\n            \"bookings_id\": \"ea9db147-9362-419c-a47b-02e564ab4841\",\n            \"bookings_created\": \"2023-11-29T08:22:02.000Z\",\n            \"bookings_updated\": \"2023-11-29T08:22:02.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"31b218ba-737b-4dda-a38e-6b4f9e5db5d2\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=f5534919-9020-44ca-94a3-1a932336c547&bookingId=ea9db147-9362-419c-a47b-02e564ab4841\",\n            \"invoice_id\": \"f5534919-9020-44ca-94a3-1a932336c547\"\n        },\n        {\n            \"bookings_id\": \"79e054b1-c141-4fbb-9e57-54205f2ba7d0\",\n            \"bookings_created\": \"2023-11-29T09:24:28.000Z\",\n            \"bookings_updated\": \"2023-11-29T09:24:28.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n            \"bookings_seat_id\": \"d0ba4ec4-a5d2-4408-8b5b-019c867baceb\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=140b60a2-3801-47ec-bb77-9a82ebd2e71c&bookingId=79e054b1-c141-4fbb-9e57-54205f2ba7d0\",\n            \"invoice_id\": \"140b60a2-3801-47ec-bb77-9a82ebd2e71c\"\n        },\n        {\n            \"bookings_id\": \"65b24bcb-90fd-457a-9283-7546fc791939\",\n            \"bookings_created\": \"2023-11-29T09:29:38.000Z\",\n            \"bookings_updated\": \"2023-11-29T09:29:38.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"c69f341a-6049-4f0a-a31e-6324915254d9\",\n            \"bookings_seat_id\": \"729629f2-e061-4be8-bfdb-0bd5d5b62293\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=089f9d69-244e-48e9-8e4e-374fd325e65f&bookingId=65b24bcb-90fd-457a-9283-7546fc791939\",\n            \"invoice_id\": \"089f9d69-244e-48e9-8e4e-374fd325e65f\"\n        },\n        {\n            \"bookings_id\": \"e971a8f7-190a-40b4-bc97-c35278103caa\",\n            \"bookings_created\": \"2023-11-29T10:30:48.000Z\",\n            \"bookings_updated\": \"2023-11-29T10:30:48.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4283\",\n            \"bookings_seat_id\": \"1e32815a-5027-4abe-8aed-54f909d9f040\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=a3cb5ecf-a267-4b0d-b566-9dbf843694e7&bookingId=e971a8f7-190a-40b4-bc97-c35278103caa\",\n            \"invoice_id\": \"a3cb5ecf-a267-4b0d-b566-9dbf843694e7\"\n        },\n        {\n            \"bookings_id\": \"199cd4a4-1829-4b91-84ca-cca28d61adf3\",\n            \"bookings_created\": \"2023-11-29T10:54:07.000Z\",\n            \"bookings_updated\": \"2023-11-29T10:54:07.000Z\",\n            \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n            \"bookings_event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4283\",\n            \"bookings_seat_id\": \"4ae62fec-c401-4817-bd93-afefc773f70a\",\n            \"payment_url\": \"http://localhost:5000/webhook?invoiceId=701d84a4-02df-4a9d-badd-25645edf9a20&bookingId=199cd4a4-1829-4b91-84ca-cca28d61adf3\",\n            \"invoice_id\": \"701d84a4-02df-4a9d-badd-25645edf9a20\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "POST BOOKING",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"bookings_event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4283\",\n  \"bookings_seat_id\": \"8249dbb0-c1fd-43b0-a6f8-c3477d781f77\",\n  \"bookings_buyer\": \"ABC\"\n  \n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/api/booking",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"booking"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "POST BOOKING",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_id\":\"a558550e-b67d-4b10-94b9-c77787601059\",\n  \"seat_id\": \"0c331db2-77fc-4e92-8822-b6b038b9d787\",\n  \"user_id\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n  \"bookings_created\": \"2023-11-29\",\n  \"bookings_updated\": \"2023-11-29\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/api/booking",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"booking"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "938"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"3aa-8J7Hei4SIad6/RMeIE4csycuxdc\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 05:23:51 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Booking successful!\",\n    \"status\": \"ONGOING\",\n    \"bookings_id\": \"4ca3a0c9-dbfe-4e3c-b362-0c0c0e5a6960\",\n    \"bookings_created\": \"2023-11-29T00:00:00.000Z\",\n    \"bookings_updated\": \"2023-11-29T00:00:00.000Z\",\n    \"bookings_buyer\": \"a7d69030-7ff3-4ec2-8991-bc2c86fc3c91\",\n    \"bookings_event\": {\n        \"event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n        \"event_name\": \"Hallo Bandung\",\n        \"event_date\": \"2023-11-29T12:34:56.000Z\",\n        \"event_desc\": \"Mari merayakan hari kita pulang dari bandung\",\n        \"event_num_seat\": 15\n    },\n    \"bookings_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\",\n    \"bookings_seat\": {\n        \"seat_id\": \"0c331db2-77fc-4e92-8822-b6b038b9d787\",\n        \"seat_status\": \"OPEN\",\n        \"seat_event_id\": \"a558550e-b67d-4b10-94b9-c77787601059\"\n    },\n    \"bookings_seat_id\": \"0c331db2-77fc-4e92-8822-b6b038b9d787\",\n    \"payment_url\": \"http://localhost:5000/webhook?invoiceId=1128e136-3055-43b9-be8c-9dc9442be009&bookingId=4ca3a0c9-dbfe-4e3c-b362-0c0c0e5a6960\",\n    \"invoice_id\": \"1128e136-3055-43b9-be8c-9dc9442be009\"\n}"
+				},
+				{
+					"name": "POST BOOKING",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bookings_event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4283\",\n  \"bookings_seat_id\": \"8249dbb0-c1fd-43b0-a6f8-c3477d781f77\",\n  \"bookings_buyer\": \"ABC\"\n  \n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/api/booking",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"booking"
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "111"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"6f-sZnFf+G3BX4OFJKJqxdbm42R4Kg\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:59:52 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": false,\n    \"message\": \"InternalServerError\",\n    \"status\": \"false\",\n    \"pdf_url\": \"localhost:4000/failure-error.pdf\"\n}"
+				}
+			]
+		},
+		{
+			"name": "DELETE EVENT",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/events/9c14c6d3-6e26-4457-9b9d-310f89d788fd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"events",
+						"9c14c6d3-6e26-4457-9b9d-310f89d788fd"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "DELETE EVENT",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6000/api/events/9c14c6d3-6e26-4457-9b9d-310f89d788fd",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6000",
+							"path": [
+								"api",
+								"events",
+								"9c14c6d3-6e26-4457-9b9d-310f89d788fd"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "206"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"ce-82RI+Yh6nvaV4ALjaYgHvn91VkA\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 19:01:47 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"event_id\": \"9c14c6d3-6e26-4457-9b9d-310f89d788fd\",\n    \"event_name\": \"Hallo Bandung2\",\n    \"event_date\": \"2023-11-29T13:34:56.000Z\",\n    \"event_desc\": \"Mari merayakan hari kita pulang dari bandung hehe\",\n    \"event_num_seat\": 15\n}"
+				}
+			]
+		},
+		{
+			"name": "GET BY BOOKING ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/api/bookings/5e6f74da-8254-4f9d-8afc-41c1b1ad1643",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"bookings",
+						"5e6f74da-8254-4f9d-8afc-41c1b1ad1643"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET BY BOOKING ID",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/api/bookings/5e6f74da-8254-4f9d-8afc-41c1b1ad1643",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"bookings",
+								"5e6f74da-8254-4f9d-8afc-41c1b1ad1643"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "392"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"188-R+acPXJ6WXyvzqcLu82kdSrN/S8\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 29 Nov 2023 10:57:39 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": [\n        {\n            \"bookings_id\": \"5e6f74da-8254-4f9d-8afc-41c1b1ad1643\",\n            \"bookings_created\": \"2023-11-28T21:23:15.726Z\",\n            \"bookings_updated\": \"2023-11-28T21:23:15.726Z\",\n            \"bookings_buyer\": \"ABC\",\n            \"bookings_event_id\": \"a554ea02-99e1-4d2d-8f98-0811d70a4283\",\n            \"bookings_seat_id\": \"8249dbb0-c1fd-43b0-a6f8-c3477d781f77\",\n            \"payment_url\": \"\",\n            \"invoice_id\": null,\n            \"bookings_seat\": {\n                \"seat_status\": \"ONGOING\"\n            }\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "WEBHOOK",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/webhook?invoiceId=B&bookingId=A&status=success",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"webhook"
+					],
+					"query": [
+						{
+							"key": "invoiceId",
+							"value": "B"
+						},
+						{
+							"key": "bookingId",
+							"value": "A"
+						},
+						{
+							"key": "status",
+							"value": "success"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,204 @@
+{
+	"info": {
+		"_postman_id": "5fe27758-3a06-4111-bea2-5d831864478a",
+		"name": "PAYMENT APP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31387940",
+		"_collection_link": "https://blue-resonance-231811.postman.co/workspace/349940a7-e510-4d54-8b9c-e6266107ef7f/collection/31387940-5fe27758-3a06-4111-bea2-5d831864478a?action=share&source=collection_link&creator=31387940"
+	},
+	"item": [
+		{
+			"name": "Create Invoice",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"amount\": 123,\n    \"bookingId\": \"DJSKLFJLSF\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/invoice",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"invoice"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 125000,\n    \"bookingId\": \"HMXJFKDL\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/webhook?invoiceId=04bac8c3-ec80-4ab1-9e4f-9b5271fbd574&bookingId=HMXJFKDL",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"webhook"
+							],
+							"query": [
+								{
+									"key": "invoiceId",
+									"value": "04bac8c3-ec80-4ab1-9e4f-9b5271fbd574"
+								},
+								{
+									"key": "bookingId",
+									"value": "HMXJFKDL"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "186"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"ba-CLRDzlT9qPeCXYAuCsFsK+5yMZw\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 16:24:07 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"invoiceId\": \"04bac8c3-ec80-4ab1-9e4f-9b5271fbd574\",\n    \"bookingId\": \"HMXJFKDL\",\n    \"webhookUrl\": \"http://localhost:5000/webhook?invoiceId=04bac8c3-ec80-4ab1-9e4f-9b5271fbd574&bookingId=HMXJFKDL\"\n}"
+				}
+			]
+		},
+		{
+			"name": "GET SIMULATE PAYMENT",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/webhook?invoiceId=3b544494-5616-4f22-88a4-2f36bec819c9&bookingId=HMXJFKDL",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"webhook"
+					],
+					"query": [
+						{
+							"key": "invoiceId",
+							"value": "3b544494-5616-4f22-88a4-2f36bec819c9"
+						},
+						{
+							"key": "bookingId",
+							"value": "HMXJFKDL"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "GET SIMULATE PAYMENT",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/webhook?invoiceId=3b544494-5616-4f22-88a4-2f36bec819c9&bookingId=HMXJFKDL",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"webhook"
+							],
+							"query": [
+								{
+									"key": "invoiceId",
+									"value": "3b544494-5616-4f22-88a4-2f36bec819c9"
+								},
+								{
+									"key": "bookingId",
+									"value": "HMXJFKDL"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "html",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/html; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "24"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"18-7TPSdgl89FtpbLp4FvTZNr8fDCw\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 28 Nov 2023 16:35:26 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "Webhook request received"
+				}
+			]
+		}
+	]
+}
