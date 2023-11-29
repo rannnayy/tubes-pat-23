@@ -384,7 +384,7 @@ app.post("/api/booking", async (req, res) => {
             'Booking failed, in simulation! Sorry for the inconvenience'
         )
         generateQR("failure", "Holding seat simulation failed!");
-        res.status(500).json({ "success": false, "message": "Booking failed, please try again!", "pdf_url": "localhost:4000/failure.pdf" });
+        res.status(500).json({ "success": false, "message": "Booking hold failed in simulation!, please try again!", "pdf_url": "localhost:4000/failure.pdf" });
     } else {
         try {
             console.log(req.body);

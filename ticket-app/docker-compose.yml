@@ -30,8 +30,8 @@ services:
     image: "rabbitmq:3-management"
     healthcheck:
       test: [ "CMD", "rabbitmqctl", "status" ]
-      interval: 5s
-      timeout: 2s
+      interval: 10s
+      timeout: 5s
       retries: 10
 
   ticketapp:
@@ -52,16 +52,6 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/ticket?schema=public
       RABBITMQ_HOST: ticket-mq
       WAIT_HOSTS: postgres:5432
-
-  apache:
-    image: httpd
-    ports:
-      - "80:80"
-    volumes:
-      # - ./src/output/:/var/www/html/src/output
-      # - .:/var/www/html/
-      - ./public/output:/usr/local/apache2/htdocs
-      # - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
 
 networks:
   default:
