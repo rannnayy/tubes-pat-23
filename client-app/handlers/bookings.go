@@ -106,7 +106,10 @@ func CreateBooking(c *fiber.Ctx) error {
 		}
 	} else {
 		pgTypeUUID := pgtype.UUID{}
-		pgTypeUUID.Scan(bookingResp.BookingID)
+		if err := pgTypeUUID.Scan(bookingResp.BookingID); err != nil {
+			return err
+		}
+
 		booking.ID = pgTypeUUID
 
 		if _, err = types.DbInstance.Queries.CreateBookingId(types.DbInstance.Ctx, *booking); err != nil {

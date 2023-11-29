@@ -125,7 +125,7 @@ async function processQueueMessage(msg) {
     // PDF in /public/output
     const output = {
         status: status === "success" ? "success" : "failure",
-        pdf_url: ('localhost/' + bookingId.toString() + '.pdf'),
+        pdf_url: ('localhost:4000/' + bookingId.toString() + '.pdf'),
     }
     let response = await fetch(client_endpoint + `/api/bookings/${bookingId}`, {
         method: 'PATCH',
@@ -467,7 +467,7 @@ app.post("/api/booking", async (req, res) => {
                 console.log("Delivered the response!");
 
             } else if (seat.seat_status === "ONGOING" || seat.seat_status === "BOOKED") {
-                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                console.log("Queueing");
                 // Queue this seat for this person
                 // Put into Queues DB
                 const que = await prisma.queues.create({
@@ -602,13 +602,11 @@ app.delete("/api/booking/booking_id/:booking_id", async (req, res) => {
                 bookings_seat: true
             },
         })
-        console.log("1");
         console.log(booking);
 
         // This seat is going to be all dequeued, get the first the make booking
         const seat_id = await booking.bookings_seat.seat_id
         console.log(seat_id)
-        console.log("2");
 
         // Consume in Queue DB
         console.log('SENDING');
@@ -651,7 +649,6 @@ app.delete("/api/booking/booking_id/:booking_id", async (req, res) => {
             amount: 100,
             bookingId: booking_id
         });
-        console.log("5");
 
         let response = await fetch(payment_endpoint + '/invoice', {
             method: 'POST',
@@ -665,7 +662,6 @@ app.delete("/api/booking/booking_id/:booking_id", async (req, res) => {
         })
         let responseJson = await response.json()
         console.log(responseJson)
-        console.log("6");
 
         res.status(200).json({
             'status': 'ONGOING',
