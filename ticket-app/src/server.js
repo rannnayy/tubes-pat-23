@@ -55,160 +55,8 @@ app.get('/', (req, res) => {
 
 app.listen(port, async () => {
     console.log(`Server running at http://ticketapp:${port}`);
-    // console.log(payment_endpoint + '/invoice');
-    // let response = await fetch(payment_endpoint + '/invoice', {
-    //     method: 'POST',
-    //     body: JSON.stringify({
-    //         amount: 100,
-    //         bookingId: "HMXJFKDL"
-    //     }),
-    //     headers: {
-    //         'Content-type': 'application/json; charset=UTF-8',
-    //     }
-    // })
-    // console.log(response);
 });
 
-
-// // ActiveMQ
-// var stompit = require('stompit');
-// var destination = '/queue/bookings';
-
-// var connectionManager = new stompit.ConnectFailover([
-//     {
-//         host: 'mq',
-//         port: 61616,
-//         resetDisconnect: false,
-//         connectHeaders: {
-//             'host': '/',
-//             login: 'admin',
-//             passcode: 'admin',
-//             'heart-beat': '5000,5000'
-//         }
-//     }
-// ]);
-
-// connectionManager.on('error', function (error ) {
-//     var connectArgs = error.connectArgs;
-//     var address = connectArgs.host + ':' + connectArgs.port;
-//     console.log('Could not connect to ' + address + ': ' + error.message);
-// });
-
-// connectionManager.on('connecting', function (connector ) {
-//     console.log('Connecting to ' + connector.serverProperties.remoteAddress.transportPath);
-// });
-
-// var channelPool = new stompit.ChannelPool(connectionManager);
-// var channelFactory = new stompit.ChannelFactory(connectionManager);
-
-// channelPool.channel(function (error, channel) {
-//     if (error) {
-//         console.log('subscribe-channel error: ' + error.message);
-//         return;
-//     }
-
-//     var subscribeHeaders = {
-//         destination: destination,
-//         headers: {
-//             'activemq.prefetchSize': 1
-//         }
-//     };
-
-//     channel.subscribe(subscribeHeaders, function (error, message, subscription) {
-//         if (error) {
-//             console.log('subscribe error: ' + error.message);
-//             return;
-//         }
-
-//         message.readString('utf8', async function (error, body) {
-//             if (error) {
-//                 console.log('read message error ' + error.message);
-//                 return;
-//             }
-
-//             // Dequeue, send, publish/enqueue
-//             const dataReceived = body;
-
-//             let response = await fetch(client_endpoint + '/api/bookings', {
-//                 method: 'POST',
-//                 body: JSON.stringify({
-//                     status: true,
-//                     pdf_url: url.pathToFileURL('./src/output/' + body.booking_id.toString() + '.pdf'),
-//                 }),
-//                 headers: {
-//                     'Content-type': 'application/json; charset=UTF-8',
-//                 }
-//             })
-//                 .then((response) => {
-//                     if (response.status == 200) {
-//                         const updatedBooking = prisma.bookings.update({
-//                             where: { bookings_id: body.booking_id, },
-//                             data: {
-//                                 payment_url: body.webhook_url.toString()
-//                             },
-//                         })
-
-//                         const seatID = prisma.bookings.findFirstOrThrow({
-//                             where: { bookings_id: body.booking_id },
-//                             include: {
-//                                 bookings_event: false,
-//                                 bookings_seat: false
-//                             }
-//                         })
-//                         console.log(seatID);
-//                         console.log(url.pathToFileURL('./src/output/' + body.booking_id.toString() + '.pdf'));
-
-//                         generateQR(body.booking_id.toString())
-//                             .then(() => {
-//                                 body.status(200).json({
-//                                     'status': 'true',
-//                                     'pdf_url': './src/output/' + body.booking_id.toString() + '.pdf'
-//                                 })
-//                             })
-//                             .catch((error) => {
-//                                 channelFactory.channel(function (error, channel) {
-
-//                                     if (error) {
-//                                         console.log('channel factory error: ' + error.message);
-//                                         return;
-//                                     }
-
-//                                     var headers = {
-//                                         'destination': destination
-//                                     };
-
-//                                     channel.send(headers, body, function (error) {
-//                                         if (error) {
-//                                             console.log('send error: ' + error.message);
-//                                             return;
-//                                         }
-
-//                                         console.log('enqueue back');
-//                                     });
-//                                 });
-//                                 body.status(500).json({
-//                                     'status': 'false',
-//                                    'pdf_url': ''
-//                                 })
-//                             });
-
-//                         // const seat = prisma.seat.update({
-//                         //     where: {
-//                         //         seat_id: seatID,
-//                         //     },
-//                         //     data: { 
-//                         //         seat_status: "BOOKED",
-//                         //     }
-//                         // })
-
-//                     } else {
-//                         console.log("Client is unable to receive webhook!");
-//                     }
-//                 })
-
-//         });
-//     });
-// });
 async function processQueueMessage(msg) {
     // Throw error to let the message back in queue
     let { invoiceId, bookingId, status } = JSON.parse(msg.content);
@@ -290,30 +138,6 @@ app.get('/webhook', async function (req, res) {
         console.log(err);
         res.status(500).send('Internal Server Error');
     }
-
-    // console.log(req.body);
-    // channelFactory.channel(function (error , channel ) {
-
-    //     if (error) {
-    //         console.log('channel factory error: ' + error.message);
-    //         return;
-    //     }
-
-    //     var headers = {
-    //         'destination': destination
-    //     };
-
-    //     channel.send(headers, req.bookingId, function (error ) {
-    //         if (error) {
-    //             console.log('send error: ' + error.message);
-    //             return;
-    //         }
-
-    //         console.log('enqueue request');
-    //     });
-    // });
-
-    // res.status(200).end();
 })
 
 app.post("/api/events", async (req, res) => {
@@ -348,11 +172,15 @@ app.post("/api/events", async (req, res) => {
             },
         })
 
-        res.json(newEvent)
+        res.status(200).json({
+            success: true,
+            message: newEvent
+        })
     } catch (error) {
         console.log(error.message)
         res.status(500).json({
-            message: "Internal Server Error",
+            success: false,
+            message: "Internal Server Error"
         })
     }
 })
@@ -363,10 +191,14 @@ app.get("/api/events/:event_id", async (req, res) => {
             where: { event_id: req.params.event_id?.toString() },
             include: { event_bookings: true, event_seat: true },
         })
-        res.json(event)
+        res.status(200).json({
+            success: true,
+            message: event
+        })
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong",
+            success: false,
+            message: "Something went wrong"
         })
     }
 })
@@ -380,10 +212,39 @@ app.get("/api/events/", async (req, res) => {
             },
         })
         console.log(event)
-        res.json(event)
+        res.status(200).json({
+            success: true,
+            message: event
+        })
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong",
+            success: false,
+            message: "Something went wrong"
+        })
+    }
+})
+
+app.get("/api/events/page/:page/pageSize/:pageSize", async (req, res) => {
+    try {
+        const page = parseInt(req.params.page) || 1;
+        const pageSize = parseInt(req.params.pageSize) || 10;
+        const event = await prisma.event.findMany({
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+            include: {
+                event_bookings: true,
+                event_seat: true
+            },
+        })
+        console.log(event)
+        res.status(200).json({
+            success: true,
+            message: event
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong"
         })
     }
 })
@@ -411,10 +272,14 @@ app.put("/api/events/:event_id", async (req, res) => {
         });
         console.log(refreshedEvent)
 
-        res.json(refreshedEvent)
+        res.status(200).json({
+            success: true,
+            message: refreshedEvent
+        })
     } catch (error) {
         console.log(error)
         res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
@@ -426,10 +291,14 @@ app.delete("/api/events/:event_id", async (req, res) => {
         const deletedEvent = await prisma.event.delete({
             where: { event_id, },
         })
-        res.json(deletedEvent)
+        res.status(200).json({
+            success: true,
+            message: deletedEvent
+        })
     } catch (error) {
         console.log(error)
         res.status(500).json({
+            success: true,
             message: "Something went wrong",
         })
     }
@@ -440,9 +309,13 @@ app.get("/api/seats/:seat_id", async (req, res) => {
         const seat = await prisma.seat.findFirstOrThrow({
             where: { seat_id: req.params.seat_id?.toString() },
         })
-        res.json(seat)
+        res.status(200).json({
+            success: true,
+            message: seat
+        })
     } catch (error) {
         res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
@@ -450,12 +323,34 @@ app.get("/api/seats/:seat_id", async (req, res) => {
 
 app.get("/api/seats/", async (req, res) => {
     try {
-        const seat = await prisma.seat.findMany({
-
+        const seat = await prisma.seat.findMany({})
+        res.status(200).json({
+            success: true,
+            message: seat
         })
-        res.json(seat)
     } catch (error) {
         res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+        })
+    }
+})
+
+app.get("/api/seats/page/:page/pageSize/:pageSize", async (req, res) => {
+    try {
+        const page = parseInt(req.params.page) || 1;
+        const pageSize = parseInt(req.params.pageSize) || 10;
+        const seats = await prisma.seat.findMany({
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+        });
+        res.status(200).json({
+            success: true,
+            message: seats
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
@@ -467,7 +362,10 @@ app.post("/api/booking", async (req, res) => {
         console.log(
             'Booking failed, please try again!'
         )
-        res.json('fail');
+        res.status(500).json({
+            'status': 'false',
+            'pdf_url': 'BookingFailed'
+        });
     } else {
         try {
             console.log(req.body);
@@ -494,17 +392,6 @@ app.post("/api/booking", async (req, res) => {
                         bookings_event_id: event_id,
                         bookings_seat_id: seat_id,
                         payment_url: ""
-                    },
-                    select: {
-                        bookings_id: true,
-                        bookings_created: true,
-                        bookings_updated: true,
-                        bookings_buyer: true,
-                        bookings_event: true,
-                        bookings_event_id: true,
-                        bookings_seat: true,
-                        bookings_seat_id: true,
-                        payment_url: true,
                     }
                 })
                 const booking_id = newBooking.bookings_id;
@@ -576,9 +463,33 @@ app.post("/api/booking", async (req, res) => {
 app.get("/api/bookings/", async (req, res) => {
     try {
         const bookings = await prisma.bookings.findMany()
-        res.json(bookings)
+        res.status(200).json({
+            success: true,
+            message: bookings
+        })
     } catch (error) {
         res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+        })
+    }
+})
+
+app.get("/api/bookings/page/:page/pageSize/:pageSize", async (req, res) => {
+    try {
+        const page = parseInt(req.params.page) || 1;
+        const pageSize = parseInt(req.params.pageSize) || 10;
+        const bookings = await prisma.bookings.findMany({
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+        })
+        res.status(200).json({
+            success: true,
+            message: bookings
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
@@ -598,9 +509,13 @@ app.get("/api/bookings/:bookings_id", async (req, res) => {
             },
         })
 
-        res.json(bookings)
+        res.status(200).json({
+            success: true,
+            message: bookings
+        })
     } catch (error) {
         res.status(500).json({
+            success: false,
             message: "Something went wrong",
         })
     }
