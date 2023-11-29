@@ -6,13 +6,9 @@ import (
 	"clientapp/types"
 	"encoding/json"
 	"fmt"
-	// "github.com/emicklei/pgtalk"
-	// "io"
-	// "github.com/google/uuid"
 	"net/http"
 	"os"
 	"time"
-	"encoding/hex"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -102,8 +98,8 @@ func CreateBooking(c *fiber.Ctx) error {
 	booking.ID = pgTypeUUID
 
 
-	var retVal database.Booking
-	if retVal,err = types.DbInstance.Queries.CreateBooking(types.DbInstance.Ctx, *booking); err != nil {
+	// var retVal database.Booking
+	if _,err = types.DbInstance.Queries.CreateBooking(types.DbInstance.Ctx, *booking); err != nil {
 		return err
 	}
 	// print retval
