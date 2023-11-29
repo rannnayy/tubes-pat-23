@@ -27,6 +27,42 @@ async function processQueueMessage(msg) {
 rabbitMQ.setConsumer(queueName, processQueueMessage);
 rabbitMQ.createChannel();
 
+// ActiveMQ
+var stompit = require('stompit');
+var destination = '/queue/seats';
+
+var servers = [
+    { 
+        host: 'activemq',
+        port: 61613,
+        connectHeaders:{
+            'host': 'localhost',
+            'login': 'admin',
+            'passcode': 'admin',
+        }
+    }
+];
+
+var connections = new stompit.ConnectFailover(servers);
+
+connections.on('connecting', function(connector) {
+    var address = connector.serverProperties.remoteAddress.transportPath;
+    
+    console.log('Connecting to ' + address);
+});
+
+connections.on('error', function(error) {
+
+    var connectArgs = error.connectArgs;
+    var address = connectArgs.host + ':' + connectArgs.port;
+    
+    console.log('Connection error to ' + address + ': ' + error.message);
+});
+
+var channelFactory = new stompit.ChannelFactory(connections);
+
+// 
+
 async function generateQRCodeDataUrl(data) {
     return new Promise((resolve, reject) => {
         QRCode.toDataURL(data, (err, url) => {
@@ -118,16 +154,18 @@ async function processQueueMessage(msg) {
 
     console.log("Notifying client...")
     // PDF in /public/output
+    const output = {
+        status: status === "success" ? "success" : "failure",
+        pdf_url: ('localhost/' + bookingId.toString() + '.pdf'),
+    }
     let response = await fetch(client_endpoint + `/api/bookings/${bookingId}`, {
         method: 'PATCH',
-        body: JSON.stringify({
-            status: status === "success" ? "success" : "failure",
-            pdf_url: ('localhost/' + bookingId.toString() + '.pdf'),
-        }),
+        body: JSON.stringify(output),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         }
     })
+    console.log(output);
 
     if (response.status !== 202) {
         throw new Error('Failed to hit Webhook for content ' + msg.content + ' Queing it back...');
@@ -455,6 +493,44 @@ app.post("/api/booking", async (req, res) => {
                 })
                 console.log("Delivered the response!");
 
+            } else if (seat.seat_status === "ONGOING") {
+                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                // Queue this seat for this person
+                let seatToEnqueue = {
+                    bookings_created: new Date(bookings_created),
+                    bookings_updated: new Date(bookings_updated),
+                    bookings_buyer: user_id,
+                    bookings_event_id: event_id,
+                    bookings_seat_id: seat_id,
+                }
+
+                // Put into ActiveMQ
+                var headers = {
+                    destination: destination,
+                    'selector': `bookings_seat_id = '${seat_id}'`,
+                    'activemq.prefetchSize': 1
+                };
+                channelFactory.channel(function(error, channel) {
+  
+                    if (error) {
+                        console.log('channel factory error: ' + error.message);
+                        return;
+                    }
+                    channel.send(headers, JSON.stringify(seatToEnqueue), function(error){
+                        if (error) {
+                            console.log('send error: ' + error.message);
+                            return;
+                        } else {
+                            console.log(`Enqueued left customer on queue for seat ${seat_id}`);
+                        }
+                    })
+                });
+            
+                res.status(200).json({
+                    'success': false,
+                    'message': 'Queued',
+                    'status': 'false'
+                })
             } else {
                 let error_message = "SeatNotAvailable";
                 console.log(error_message)
@@ -551,6 +627,144 @@ app.get("/api/bookings/:bookings_id", async (req, res) => {
             success: true,
             message: bookings
         })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+        })
+    }
+})
+
+app.delete("/api/booking/:booking_id", async (req, res) => {
+    try {
+        let booking_id = req.params.booking_id
+        const booking = await prisma.bookings.findFirstOrThrow({
+            where: { bookings_id: booking_id, },
+            include: {
+                bookings_seat: true
+            },
+        })
+        
+        // This seat is going to be all dequeued, get the first the make booking
+        const seat_id = booking.bookings_seat.seat_id
+
+        await prisma.bookings.delete({
+            where: { bookings_id: booking_id, }
+        })
+
+        // Consume in ActiveMQ
+        let requestors = [];
+        
+        var headers = {
+            destination: destination,
+            'selector': `bookings_seat_id = '${seat_id}'`,
+            'activemq.prefetchSize': 1
+        };
+    
+        channelFactory.channel(function(error, channel) {
+    
+            if (error) {
+                console.log('channel factory error: ' + error.message);
+                return;
+            }
+            
+            channel.subscribe(headers, function(error, message, subscription){
+                if (error) {
+                    console.log('subscribe error: ' + error.message);
+                    return;
+                }
+
+                message.readString('utf8', function(error, string) {
+                    if (error) {
+                        console.log('read message error: ' + error.message);
+                        return;
+                    }
+                    requestors.push(JSON.parse(string));
+                    console.log(JSON.parse(string))
+                });
+        
+                message.on('end', function(){
+                    console.log("DONE SEARCHING");
+                });
+            });
+        });
+        let requestor = requestors.shift();
+        requestors.shift();
+
+        // Enqueue the 2nd to last
+        channelFactory.channel(function(error, channel) {
+  
+            if (error) {
+                console.log('channel factory error: ' + error.message);
+                return;
+            }
+            requestors.map(reqs => {
+                var seatToEnqueue = JSON.stringify({
+                    bookings_created: reqs.bookings_created,
+                    bookings_updated: reqs.bookings_updated,
+                    bookings_buyer: reqs.bookings_buyer,
+                    bookings_event_id: reqs.bookings_event_id,
+                    bookings_seat_id: reqs.bookings_seat_id,
+                });
+
+                channel.send(headers, seatToEnqueue, function(error){
+                    if (error) {
+                        console.log('send error: ' + error.message);
+                        return;
+                    } else {
+                        console.log(`Enqueued left customer on queue for seat ${seat_id}`);
+                    }
+                })
+            })
+        })
+        
+        // Already gotten the first only, make a booking for it
+        const newBooking = await prisma.bookings.create({
+            data: {
+                bookings_created: requestor.bookings_created,
+                bookings_updated: requestor.bookings_updated,
+                bookings_buyer: requestor.bookings_buyer,
+                bookings_event_id: requestor.bookings_event_id,
+                bookings_seat_id: requestor.bookings_seat_id,
+                payment_url: ""
+            }
+        })
+        booking_id = newBooking.bookings_id;
+        console.log(booking_id);
+
+        const seat = await prisma.seat.update({
+            where: {
+                seat_id: seat_id,
+            },
+            data: {
+                seat_status: "ONGOING",
+            }
+        })
+
+        console.log(payment_endpoint + '/invoice');
+        console.log({
+            amount: 100,
+            bookingId: booking_id
+        });
+
+        let response = await fetch(payment_endpoint + '/invoice', {
+            method: 'POST',
+            body: JSON.stringify({
+                amount: 100,
+                bookingId: booking_id
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            }
+        })
+        let responseJson = await response.json()
+        console.log(responseJson)
+
+        res.status(200).json({
+            'status': 'ONGOING',
+            'pdf_url': responseJson
+        })
+        console.log("Delivered the response!");
     } catch (error) {
         res.status(500).json({
             success: false,

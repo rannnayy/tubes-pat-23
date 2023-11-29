@@ -17,14 +17,19 @@ services:
       timeout: 2s
       retries: 10
 
-  # mq:
-  #   image: webcenter/activemq
-  #   restart: always
-  #   ports:
-  #     - '61616:61616'
-  #     - '8161:8161'
-  #   healthcheck:
-  #     test: [ "NONE" ]
+  activemq:
+    image: rmohr/activemq:5.15.9-alpine
+    restart: always
+    ports:
+      - 61616:61616
+      - 8161:8161
+      - 5673:5673
+    container_name: activemq
+    healthcheck:
+      test: /opt/activemq/bin/activemq query --objname type=Broker,brokerName=*,service=Health | grep Good
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   ticket-mq:
     image: "rabbitmq:3-management"
