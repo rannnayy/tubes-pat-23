@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -16,16 +17,16 @@ import (
 // {event_id: "", chair_id: ""}
 
 type BookingResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Status  string `json:"status"`
-	BookingID string `json:"bookings_id"`
-	EventID string `json:"bookings_event_id"`
-	SeatID string `json:"bookings_seat_id"`
+	Success    bool   `json:"success"`
+	Message    string `json:"message"`
+	Status     string `json:"status"`
+	BookingID  string `json:"bookings_id"`
+	EventID    string `json:"bookings_event_id"`
+	SeatID     string `json:"bookings_seat_id"`
 	PaymentURL string `json:"payment_url"`
-	InvoiceID string `json:"invoice_id"`
+	InvoiceID  string `json:"invoice_id"`
+	PdfURL     string `json:"pdf_url"`
 }
-
 
 func CreateBooking(c *fiber.Ctx) error {
 	fmt.Println("CreateBooking")
@@ -39,7 +40,7 @@ func CreateBooking(c *fiber.Ctx) error {
 		return err
 	}
 
-	booking := new(database.CreateBookingParams)
+	booking := new(database.CreateBookingIdParams)
 
 	if err := c.BodyParser(booking); err != nil {
 		return err
@@ -87,28 +88,31 @@ func CreateBooking(c *fiber.Ctx) error {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 && res.StatusCode != 201 {
+		// body is {status: "", pdf_url: ""}
+		booking_failed := new(database.CreateBookingFailedParams)
+		booking_failed.UserID = booking.UserID
+		booking_failed.EventID = booking.EventID
+		booking_failed.ChairID = booking.ChairID
+		booking_failed.Status = database.BookingStatusFailure
+		booking_failed.PdfUrl.Scan(bookingResp.PdfURL)
+
+		if _, err = types.DbInstance.Queries.CreateBookingFailed(types.DbInstance.Ctx, *booking_failed); err != nil {
+			return err
+		}
+
 		return &fiber.Error{
 			Code:    fiber.StatusInternalServerError,
 			Message: bookingResp.Message,
 		}
+	} else {
+		pgTypeUUID := pgtype.UUID{}
+		pgTypeUUID.Scan(bookingResp.BookingID)
+		booking.ID = pgTypeUUID
+
+		if _, err = types.DbInstance.Queries.CreateBookingId(types.DbInstance.Ctx, *booking); err != nil {
+			return err
+		}
 	}
-
-	pgTypeUUID := pgtype.UUID{}
-	pgTypeUUID.Scan(bookingResp.BookingID)
-	booking.ID = pgTypeUUID
-
-
-	// var retVal database.Booking
-	if _,err = types.DbInstance.Queries.CreateBooking(types.DbInstance.Ctx, *booking); err != nil {
-		return err
-	}
-	// print retval
-
-
-	// _m, err := io.ReadAll(res.Body)
-	// if err != nil {
-	// 	return err
-	// }
 
 	dataJSON, err := json.Marshal(bookingResp)
 	if err != nil {
