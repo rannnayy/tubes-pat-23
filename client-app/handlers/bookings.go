@@ -195,6 +195,28 @@ func DeleteBooking(c *fiber.Ctx) error {
 		return err
 	}
 
+	client := &http.Client{}
+
+	// create a new DELETE request
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/api/booking/booking_id/%s", os.Getenv("TICKET_APP"), c.Params("id")), nil)
+	if err != nil {
+		panic(err)
+	}
+
+	// send the request
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return &fiber.Error{
+			Code:    fiber.StatusInternalServerError,
+			Message: "Internal call error",
+		}
+	}
+
 	if err := types.DbInstance.Queries.DeleteBooking(types.DbInstance.Ctx, bookingId); err != nil {
 		return err
 	}
