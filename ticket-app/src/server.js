@@ -9,12 +9,17 @@ const QRCode = require('qrcode');
 const fs = require('fs');
 const { PDFDocument, rgb } = require('pdf-lib');
 const url = require('url');
+const path = require('path');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
 
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
+
 const port = 4000;
+console.log(publicPath);
 
 var payment_endpoint = 'http://payment:5000';
 var client_endpoint = 'http://clientapp:3000';
@@ -56,7 +61,7 @@ async function generateQR(urlToEncode, failureReason) {
     const pdfBytes = await pdfDoc.save();
 
     // Specify the output directory
-    const outputDir = '../public/output';
+    const outputDir = './src/public';
 
     // Create the output directory if it doesn't exist
     await fs.promises.mkdir(outputDir, { recursive: true });
@@ -122,7 +127,7 @@ async function processQueueMessage(msg) {
         method: 'PATCH',
         body: JSON.stringify({
             status: status === "success" ? "success" : "failure",
-            pdf_url: ('localhost/' + bookingId.toString() + '.pdf'),
+            pdf_url: ('localhost:4000/' + bookingId.toString() + '.pdf'),
         }),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -378,7 +383,8 @@ app.post("/api/booking", async (req, res) => {
         console.log(
             'Booking failed, in simulation! Sorry for the inconvenience'
         )
-        res.status(500).json({ "success": false, "message": "Booking failed, please try again!", "pdf_url": "localhost/failure.pdf" });
+        generateQR("failure", "Holding seat simulation failed!");
+        res.status(500).json({ "success": false, "message": "Booking failed, please try again!", "pdf_url": "localhost:4000/failure.pdf" });
     } else {
         try {
             console.log(req.body);
@@ -456,16 +462,19 @@ app.post("/api/booking", async (req, res) => {
                 console.log("Delivered the response!");
 
             } else {
+                generateQR("failure-navail", "Seat not available!!");
                 let error_message = "SeatNotAvailable";
                 console.log(error_message)
                 res.status(500).json({
                     'success': false,
                     'message': error_message,
                     'status': 'false',
+                    'pdf_url': 'localhost:4000/failure-navail.pdf'
                 })
             }
         } catch (error) {
             console.log(error)
+            generateQR("failure-error", "Request doesnt satisfy constraints!!");
             if (error.code === 'P2002') {
                 let error_message = "UniqueConstraintViolationEventFullyBookedOrSeatTaken";
                 console.log(error_message);
@@ -473,7 +482,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
-                    'pdf_url': 'localhost/failure.pdf'
+                    'pdf_url': 'localhost:4000/failure-error.pdf'
                 })
             } else if (error.code === "P2003") {
                 let error_message = "ForeignKeyConstraintViolationEventOrSeatNotFound";
@@ -481,7 +490,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
-                    'pdf_url': 'localhost/failure.pdf'
+                    'pdf_url': 'localhost:4000/failure-error.pdf'
                 })
             } else {
                 let error_message = 'InternalServerError'
@@ -490,7 +499,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
-                    'pdf_url': 'localhost/failure.pdf'
+                    'pdf_url': 'localhost:4000/failure-error.pdf'
                 });
             }
         }
