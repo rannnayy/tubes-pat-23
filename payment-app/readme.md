@@ -1,7 +1,15 @@
 # Payment App
-1. Download rabbitMQ
-2. Setup .env dengan DB mysql dan kredensial sesuai
-3. Tes pakai api.http, terus hit linknya buat mulai prosesing
 
-## ALternative
-1. Docker-compose up --build
+## API Docs
+
+Payment simulator
+
+### HTTP APIs
+Please refer to the given postman collection. 
+
+
+## How To Start
+
+Jelaskan step by step cara menjalankan kode dari service ini, misal:
+
+1. Run `docker-compose up` 
