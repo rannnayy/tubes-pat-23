@@ -5,6 +5,7 @@ const { PrismaClient } = require('.prisma/client')
 const bodyParser = require("body-parser");
 const uuid = require('uuid');
 const qr = require('qrcode');
+const QRCode = require('qrcode');
 const fs = require('fs');
 const { PDFDocument, rgb } = require('pdf-lib');
 const url = require('url');
@@ -12,6 +13,7 @@ const url = require('url');
 const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
+
 const port = 4000;
 
 var payment_endpoint = 'http://payment:5000';
@@ -25,29 +27,45 @@ async function processQueueMessage(msg) {
 rabbitMQ.setConsumer(queueName, processQueueMessage);
 rabbitMQ.createChannel();
 
-async function generateQR(urlToEncode) {
-    const imagePath = '../public/output/' + urlToEncode + '.png'
-    const pdfPath = '../public/output/' + urlToEncode + '.pdf'
-    await qr.toFile(imagePath, urlToEncode, { type: 'image/png' });
-    const image = await fs.promises.readFile(imagePath,);
-    const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([400, 400]);
-    const imageEmbed = await pdfDoc.embedPng(image);
-    const { width, height } = imageEmbed.scaleToFit(
-        page.getWidth(),
-        page.getHeight(),
-    );
-
-    page.drawImage(imageEmbed, {
-        x: page.getWidth() / 2 - width / 2,
-        y: page.getHeight() / 2 - height / 2,
-        width,
-        height,
-        color: rgb(0, 0, 0),
+async function generateQRCodeDataUrl(data) {
+    return new Promise((resolve, reject) => {
+        QRCode.toDataURL(data, (err, url) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(url);
+            }
+        });
     });
-    const pdfBytes = await pdfDoc.save();
-    await fs.promises.writeFile(pdfPath, pdfBytes);
 }
+
+async function generateQR(urlToEncode, failureReason) {
+    const pdfDoc = await PDFDocument.create();
+
+    const page = pdfDoc.addPage();
+
+    if (failureReason !== null) {
+        page.drawText(failureReason, { x: 50, y: 400, fontColor: rgb(1, 0, 0) });
+    } else {
+        const qrCodeDataUrl = await generateQRCodeDataUrl(urlToEncode);
+        const image = await pdfDoc.embedPng(qrCodeDataUrl);
+        const { width, height } = image.scale(0.5);
+        page.drawImage(image, { x: 50, y: 400, width, height });
+    }
+
+    const pdfBytes = await pdfDoc.save();
+
+    // Specify the output directory
+    const outputDir = '../public/output';
+
+    // Create the output directory if it doesn't exist
+    await fs.promises.mkdir(outputDir, { recursive: true });
+
+    // Write the PDF to a file
+    const outputPath = `${outputDir}/${urlToEncode}.pdf`;
+    await fs.promises.writeFile(outputPath, pdfBytes);
+}
+
 
 app.get('/', (req, res) => {
     res.send('Hello, World!');
@@ -58,7 +76,6 @@ app.listen(port, async () => {
 });
 
 async function processQueueMessage(msg) {
-    return;
     // Throw error to let the message back in queue
     let { invoiceId, bookingId, status } = JSON.parse(msg.content);
     if (invoiceId === undefined || bookingId === undefined || status === undefined) {
@@ -69,22 +86,22 @@ async function processQueueMessage(msg) {
     // 2 second delay
     await new Promise(resolve => setTimeout(resolve, 2000));
     console.log(invoiceId, bookingId, status);
+    let seatID;
+    // If no seat, just ack this bad message
+    try {
 
-    // Update database
-    const updatedBooking = await prisma.bookings.update({
-        where: { bookings_id: bookingId, },
-        data: {
-            payment_url: status.toString()
-        },
-    })
-
-    const seatID = await prisma.bookings.findFirstOrThrow({
-        where: { bookings_id: bookingId },
-        include: {
-            bookings_event: false,
-            bookings_seat: false
-        }
-    })
+        let booking = await prisma.bookings.findFirstOrThrow({
+            where: { bookings_id: bookingId },
+            include: {
+                bookings_event: false,
+                bookings_seat: false
+            }
+        })
+        seatID = booking.bookings_seat_id;
+    } catch (error) {
+        console.log("Ignoring this, booking not found in DB")
+        return;
+    }
 
     const seatStatus = status === "success" ? "BOOKED" : "OPEN";
 
@@ -96,26 +113,23 @@ async function processQueueMessage(msg) {
             seat_status: seatStatus,
         }
     })
-    console.log(seatID);
-    // TODO, BLOCK / UNBLOCK SEATID
 
-    console.log(url.pathToFileURL('../public/output/' + bookingId.toString() + '.pdf'));
-    await generateQR(bookingId.toString());
+    await generateQR(bookingId.toString(), status === "success" ? null : "Payment simulation failed!");
 
     console.log("Notifying client...")
     // PDF in /public/output
-    let response = await fetch(client_endpoint + '/api/bookings', {
+    let response = await fetch(client_endpoint + `/api/bookings/${bookingId}`, {
         method: 'PATCH',
         body: JSON.stringify({
-            status: true,
-            pdf_url: url.pathToFileURL('./public/output/' + bookingId.toString() + '.pdf'),
+            status: status === "success" ? "success" : "failure",
+            pdf_url: ('localhost/' + bookingId.toString() + '.pdf'),
         }),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         }
     })
 
-    if (response.status !== 200) {
+    if (response.status !== 202) {
         throw new Error('Failed to hit Webhook for content ' + msg.content + ' Queing it back...');
     }
     console.log("Finish processing message");
@@ -362,9 +376,9 @@ app.post("/api/booking", async (req, res) => {
     console.log(req.body)
     if (Math.floor(Math.random() * 10) in [0, 1]) {
         console.log(
-            'Booking failed, please try again!'
+            'Booking failed, in simulation! Sorry for the inconvenience'
         )
-        res.status(500).json({ "success": false, "message": "Booking failed, please try again!" });
+        res.status(500).json({ "success": false, "message": "Booking failed, please try again!", "pdf_url": "localhost/failure.pdf" });
     } else {
         try {
             console.log(req.body);
@@ -459,6 +473,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
+                    'pdf_url': 'localhost/failure.pdf'
                 })
             } else if (error.code === "P2003") {
                 let error_message = "ForeignKeyConstraintViolationEventOrSeatNotFound";
@@ -466,6 +481,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
+                    'pdf_url': 'localhost/failure.pdf'
                 })
             } else {
                 let error_message = 'InternalServerError'
@@ -474,6 +490,7 @@ app.post("/api/booking", async (req, res) => {
                     'success': false,
                     'message': error_message,
                     'status': 'false',
+                    'pdf_url': 'localhost/failure.pdf'
                 });
             }
         }
